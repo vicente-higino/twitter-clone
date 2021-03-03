@@ -1,0 +1,147 @@
+html {
+  box-sizing: border-box;
+}
+
+html, body, div#root {
+  height: auto;
+  background-color: #4c4c4c;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333333;
+}
+
+nav li {
+  float: left;
+}
+
+nav li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 16px;
+  text-decoration: none;
+}
+
+nav li a:hover {
+  background-color: #111111;
+}
+
+nav li a.active {
+  border-bottom: solid 5px orange;
+}
+
+nav {
+  margin-bottom: 5px;
+  position: sticky;
+  top: 0;
+}
+
+input[type=password], input[type=username], input[type=text] {
+  width: 100%;
+  margin-bottom: 5px;
+  font-size: 1.4rem;
+}
+
+label {
+  color: white;
+}
+
+form {
+  margin: 0 30%;
+  background-color: #696767;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+input[type=submit] {
+  margin-top: 10px;
+  width: 100%;
+  font-size: 1.3rem;
+  background-color: #fe0033;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  min-height: 40px;
+}
+
+input[type=submit]:hover {
+  cursor: pointer;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+}
+
+.logoutButton {
+  float: right;
+  border: 2px solid white;
+}
+
+.post {
+  background-color: #656161;
+  color: white;
+  margin: 4px 30%;
+  padding: 8px;
+  border-radius: 5px;
+  border: solid 2px #7b7b76;
+  word-break: break-all;
+}
+
+p.post-mainText {
+  white-space: pre-line;
+}
+
+.post-username {
+  margin: 0;
+  display: inline-block;
+}
+
+.post-sideTime {
+  float: right;
+  margin: 0;
+  color: #b9b9b9;
+  font-size: 0.95rem;
+}
+
+.post-maker {
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 100px;
+  background-color: transparent;
+  border: none;
+  color: white;
+}
+
+.post-button {
+  width: 50%;
+  background-color: #fe0033;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+textarea::placeholder {
+  color: #b9b9b9;
+}
+
+.profile-link {
+  color: white;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 800px) {
+  form, .post {
+    margin: 4px 5px;
+  }
+}
