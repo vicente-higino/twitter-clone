@@ -15,15 +15,14 @@ export function Profile() {
         await check_if_is_LoggedIn(setState, state);
         await getPosts(setPosts);
       } catch (error) {
-        history.push("/login");
+        errorHandler(error, history, setState);
       }
     }
     if (state.isLoggin) {
       try {
         await getPosts(setPosts);
       } catch (error) {
-        setState({ ...state, isLoggin: false, profile: {} });
-        history.push("/login");
+        errorHandler(error, history, setState);
       }
     }
   }, []);
@@ -43,3 +42,10 @@ async function getPosts(setPosts) {
   setPosts(posts);
 }
 
+function errorHandler(error, history, setState) {
+  const { status } = error.response;
+  if (status == 401) {
+    setState({ ...state, isLoggin: false, profile: {} });
+    history.push("/login");
+  }
+}

@@ -17,15 +17,14 @@ export function PublicProfile() {
         await check_if_is_LoggedIn(setState, state);
         await getPosts(user, setPosts);
       } catch (error) {
-        errorHandler(error, history, setMessage);
+        errorHandler(error, history, setMessage, setState);
       }
     }
     if (state.isLoggin) {
       try {
         await getPosts(user, setPosts);
       } catch (error) {
-        setState({ ...state, isLoggin: false, profile: {} });
-        errorHandler(error, history, setMessage);
+        errorHandler(error, history, setMessage, setState);
       }
     }
   }, []);
@@ -35,10 +34,12 @@ export function PublicProfile() {
     {state.isLoggin && <Feed posts={posts} />}
   </>;
 }
-function errorHandler(error, history, setMessage) {
+function errorHandler(error, history, setMessage, setState) {
   const { status } = error.response;
-  if (status == 401)
+  if (status == 401) {
+    setState({ ...state, isLoggin: false, profile: {} });
     history.push("/login");
+  }
   if (status == 404)
     setMessage("User not found!");
 }
