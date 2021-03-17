@@ -9,6 +9,7 @@ html, body, div#root {
 
 *, *:before, *:after {
   box-sizing: inherit;
+  outline: none;
 }
 
 nav ul {
@@ -40,7 +41,6 @@ nav li a.active {
 }
 
 nav {
-  margin-bottom: 5px;
   position: sticky;
   top: 0;
 }
@@ -48,18 +48,25 @@ nav {
 input[type=password], input[type=username], input[type=text] {
   width: 100%;
   margin-bottom: 5px;
-  font-size: 1.4rem;
+  font-size: 1.2em;
 }
 
 label {
   color: white;
 }
 
+label.select-file:hover {
+  background-color: #3e3e3e;
+  cursor: pointer;
+}
+
+section {
+  margin: 4px 30%;
+}
+
 form {
-  margin: 0 30%;
   background-color: #696767;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 5px 10px;
 }
 
 input[type=submit] {
@@ -77,11 +84,6 @@ input[type=submit]:hover {
   cursor: pointer;
 }
 
-h1 {
-  color: white;
-  text-align: center;
-}
-
 .logoutButton {
   float: right;
   border: 2px solid white;
@@ -90,24 +92,68 @@ h1 {
 .post {
   background-color: #656161;
   color: white;
-  margin: 4px 30%;
   padding: 8px;
-  border-radius: 5px;
-  border: solid 2px #7b7b76;
+  /* border-radius: 5px;
+  border: solid 2px #7b7b76; */
   word-break: break-all;
+  border-top: solid 1px #7b7b76;
 }
 
-p.post-mainText {
+.post-mainText {
   white-space: pre-line;
+  max-height: 150px;
+  overflow-y: auto;
+  word-break: break-word;
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 1.2em;
+}
+
+/* ::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #7e7e7e;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #252525;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #202020;
+} */
+
+.form-text-length {
+  float: right;
+  margin: 0;
+  color: #b9b9b9;
+  font-size: 0.95rem;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.post-profile-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
 }
 
 .post-username {
   margin: 0;
   display: inline-block;
+  flex-grow: 1;
+  margin-left: 10px;
 }
 
 .post-sideTime {
-  float: right;
   margin: 0;
   color: #b9b9b9;
   font-size: 0.95rem;
@@ -117,9 +163,37 @@ p.post-mainText {
   min-width: 100%;
   max-width: 100%;
   min-height: 100px;
+  max-height: 100px;
+  font-size: 1.2em;
   background-color: transparent;
   border: none;
   color: white;
+  resize: none;
+}
+
+#select-file {
+  display: none;
+}
+
+.select-file {
+  display: block;
+  text-align: center;
+  border: 1px solid white;
+  border-radius: 5px;
+  margin: 5px 20px;
+}
+
+.image-container {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.post-img {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  background-color: black;
+  display: block;
 }
 
 .post-button {
@@ -127,11 +201,7 @@ p.post-mainText {
   background-color: #fe0033;
 }
 
-textarea:focus {
-  outline: none;
-}
-
-textarea::placeholder {
+::placeholder {
   color: #b9b9b9;
 }
 
@@ -141,7 +211,7 @@ textarea::placeholder {
 }
 
 @media screen and (max-width: 800px) {
-  form, .post {
+  section {
     margin: 4px 5px;
   }
 }

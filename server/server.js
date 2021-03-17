@@ -4,7 +4,13 @@ import bodyparser from "body-parser"
 import session from "express-session";
 import { config } from "./auth.js";
 import { User, Profile, Post } from "./database.js";
+import pkg from 'sequelize';
+const { Op } = pkg;
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
 import cors from 'cors';
+import FileType from 'file-type';
 const app = express();
 const router = express.Router();
 const privateRouter = express.Router();
@@ -20,6 +26,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json({ extended: true }));
+app.use(bodyparser.raw({ type: 'application/octet-stream', limit: '20mb' }));
+
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -28,6 +36,8 @@ function isAuthenticated(req, res, next) {
     res.status(401).json({ message: "You must login" })
   }
 }
+app.use('/images', isAuthenticated);
+app.use('/images', express.static('./images'));
 privateRouter.use(isAuthenticated);
 
 privateRouter.get("/profile", async (req, res) => {
@@ -53,19 +63,55 @@ privateRouter.get("/myposts", async (req, res) => {
 });
 
 privateRouter.get("/feed", async (req, res) => {
+  const { limit, offset, time } = req.query;
   const texts = await (Post.findAll({
     include: [Profile],
-    order: [['createdAt', 'DESC']]
+    order: [['createdAt', 'DESC']],
+    limit,
+    offset,
+    where: {
+      createdAt: {
+        [Op.lte]: time || new Date().toISOString()
+      }
+    }
   }));
   res.json({ feed: texts });
 });
 
 privateRouter.post("/post", async (req, res) => {
-  const { text } = req.body;
-  const { id: profileId } = req.user.profile;
-  const { createdAt } = await Post.create({ text, profileId });
-  res.json({ createdAt });
+  try {
+    const { text, images } = req.body;
+    const { id: profileId } = req.user.profile;
+    const { createdAt } = await Post.create({ text, images, profileId });
+    res.json({ createdAt });
+  } catch (error) {
+    res.status(400).json({ message: "Something went wrong" });
+  }
+
 });
+
+privateRouter.post("/saveimage", async (req, res) => {
+  try {
+    if (!req.body.length) {
+      throw new Error("No image");
+    }
+    const { ext, mime } = await FileType.fromBuffer(req.body);
+    const text = await req.body;
+    const name = crypto.createHash("SHA1").update(text).digest('hex');
+    const firtPart = "./images/" + name.substr(0, 2);
+    const secondPart = firtPart + "/" + name.substr(2, 2) + "/";
+    const imagePath = path.join(secondPart, name + "." + ext);
+    if (!fs.existsSync("./images")) fs.mkdirSync("./images");
+    if (!fs.existsSync(firtPart)) fs.mkdirSync(firtPart);
+    if (!fs.existsSync(secondPart)) fs.mkdirSync(secondPart);
+    fs.writeFileSync(imagePath, text);
+    res.json({ url: "/" + imagePath, type: mime });
+  } catch (error) {
+    res.status(400).json({ message: "Image coud not be saved!" })
+  }
+
+});
+
 
 router.get("/logout", async (req, res) => {
   await req.logOut();
@@ -74,7 +120,8 @@ router.get("/logout", async (req, res) => {
 
 router.post('/login', function (req, res, next) {
   if (req.isAuthenticated()) {
-    return res.send("ok");
+    const { username } = req.user.profile;
+    res.json({ username });
   } else {
     next();
   }
@@ -93,10 +140,11 @@ router.post("/signup", async (req, res) => {
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     if (err) { return next(err); }
-    if (!user) { return res.send("fail") }
+    if (!user) { return res.status(401).send("fail") }
     req.logIn(user, function (err) {
       if (err) { return next(err); }
-      return res.send("ok");
+      const { username } = user.profile;
+      return res.json({ username });
     });
   })(req, res, next)
 });

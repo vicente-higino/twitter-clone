@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useState } from "react";
 import { config } from "./config";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { LogoutButton } from './LogoutButton';
 import { NavBarItem } from './NavBarItem';
 import { SignUp } from './SignUp';
@@ -9,6 +9,7 @@ import { Home } from './Home';
 import { PublicProfile } from './PublicProfile';
 import { Profile } from './Profile';
 import { Login } from './Login';
+import { PrivateRoute } from "./utils"
 
 export const url = config.url.API;
 export const StateContext = React.createContext();
@@ -32,20 +33,23 @@ function App() {
           </ul>
         </nav>
         <Switch>
-          <Route exact path="/home">
+          <PrivateRoute exact path="/home">
             <Home />
-          </Route>
+          </PrivateRoute>
           <Route exact path="/login">
             <Login />
           </Route>
-          <Route exact path="/myprofile">
+          <PrivateRoute exact path="/myprofile">
             <Profile />
-          </Route>
-          <Route exact path="/profile/:username">
+          </PrivateRoute>
+          <PrivateRoute exact path="/profile/:username">
             <PublicProfile />
-          </Route>
+          </PrivateRoute>
           <Route exact path="/signup">
             <SignUp />
+          </Route>
+          <Route>
+            <Redirect to="/home" />
           </Route>
         </Switch>
       </StateContext.Provider>

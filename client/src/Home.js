@@ -11,21 +11,11 @@ export function Home() {
   const [posts, setPosts] = useState([]);
   let history = useHistory();
   useEffect(async () => {
-    if (!state.isLoggin) {
-      try {
-        await check_if_is_LoggedIn(setState, state);
-        await getPosts(setPosts);
-      } catch (error) {
-        errorHandler(error, history);
-      }
-    }
-    if (state.isLoggin) {
-      try {
-        await getPosts(setPosts);
-      } catch (error) {
-        setState({ ...state, isLoggin: false, profile: {} });
-        errorHandler(error, history);
-      }
+    try {
+      await getPosts(setPosts);
+    } catch (error) {
+      setState({ ...state, isLoggin: false, profile: {} });
+      errorHandler(error, history);
     }
   }, []);
 
@@ -41,7 +31,7 @@ function errorHandler(error, history) {
 }
 
 async function getPosts(setPosts) {
-  const { data: { feed: posts } } = await axios.get(url + "/feed");
+  const { data: { feed: posts } } = await axios.get(url + "/feed?limit=20");
   setPosts(posts);
 }
 
