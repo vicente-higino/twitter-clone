@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { Feed } from './Feed';
 import { PostMaker } from './PostMaker';
 import { StateContext, url } from './App';
-import { checkIfIsLoggedIn as check_if_is_LoggedIn } from "./utils"
 
 export function Home() {
   const [state, setState] = useContext(StateContext);
@@ -31,7 +30,7 @@ function errorHandler(error, history) {
 }
 
 async function getPosts(setPosts) {
-  const { data: { feed: posts } } = await axios.get(url + "/feed?limit=20");
+  const { data: { feed: posts } } = await axios.get(url + "/feed?limit=50");
   setPosts(posts);
 }
 
