@@ -1,6 +1,6 @@
 const prod = {
     url: {
-        API: "http://" + window.location.host + "/api"
+        API: window.location.protocol + "//" + window.location.host + "/api"
     },
 };
 const dev = {

@@ -94,8 +94,6 @@ input[type=submit]:hover {
   background-color: #656161;
   color: white;
   padding: 8px;
-  /* border-radius: 5px;
-  border: solid 2px #7b7b76; */
   word-break: break-all;
 }
 
@@ -175,6 +173,35 @@ input[type=submit]:hover {
   resize: none;
 }
 
+.post-footer {
+  margin-top: 5px;
+}
+
+.post-like {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.post-like::after {
+  content: " ❤";
+}
+
+.post-button-like {
+  font-size: 0.7rem;
+  padding: 0.6em;
+  background: none;
+  color: white;
+  text-transform: uppercase;
+  border: 2px solid white;
+  border-radius: 5px;
+  min-width: 100px;
+}
+
+.post-button-like:hover {
+  cursor: pointer;
+  background: #00000036;
+}
+
 #select-file {
   display: none;
 }
@@ -192,6 +219,10 @@ input[type=submit]:hover {
   height: 100%;
   width: 30%;
   top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #000;
 }
 
 .right-img-button {
@@ -224,7 +255,6 @@ input[type=submit]:hover {
   order: 1;
 }
 
-
 .img-active {
   order: 0;
 }
@@ -238,6 +268,20 @@ input[type=submit]:hover {
   object-fit: contain;
   background-color: #000000eb;
   z-index: 15;
+}
+
+/* ◀️ */
+
+.arrow-left-white {
+  transform: rotate(90deg);
+  margin-right: auto;
+}
+
+/* ▶️ */
+
+.arrow-right-white {
+  transform: rotate(-90deg);
+  margin-left: auto;
 }
 
 .post-button {
@@ -257,5 +301,8 @@ input[type=submit]:hover {
 @media (max-width: 800px) {
   section {
     margin: 4px 5px;
+  }
+  .post-button-like:hover {
+    background: initial;
   }
 }

@@ -24,6 +24,7 @@ export default (sequelize) => {
 				return JSON.parse(this.getDataValue('images'));
 			}
 		},
+
 	}, {
 		sequelize,
 		modelName: 'post'

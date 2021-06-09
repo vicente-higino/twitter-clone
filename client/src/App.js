@@ -4,11 +4,11 @@ import { config } from "./config";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { LogoutButton } from './LogoutButton';
 import { NavBarItem } from './NavBarItem';
-import { SignUp } from './SignUp';
-import { Home } from './Home';
-import { PublicProfile } from './PublicProfile';
-import { Profile } from './Profile';
-import { Login } from './Login';
+import { SignUp } from './pages/SignUp';
+import { Home } from './pages/Home';
+import { PublicProfile } from './pages/PublicProfile';
+import { Profile } from './pages/Profile';
+import { Login } from './pages/Login';
 import { PrivateRoute } from "./utils"
 
 export const url = config.url.API;

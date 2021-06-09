@@ -3,14 +3,15 @@ import passport from "passport";
 import bodyparser from "body-parser"
 import session from "express-session";
 import { config } from "./auth.js";
-import { User, Profile, Post } from "./database.js";
-import pkg from 'sequelize';
+import { db, User, Profile, Post, Like } from "./database.js";
+import pkg, { Sequelize } from 'sequelize';
 const { Op } = pkg;
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import cors from 'cors';
 import FileType from 'file-type';
+
 const app = express();
 const router = express.Router();
 const privateRouter = express.Router();
@@ -27,7 +28,6 @@ app.use(passport.session());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json({ extended: true }));
 app.use(bodyparser.raw({ type: 'application/octet-stream', limit: '20mb' }));
-
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -49,7 +49,14 @@ privateRouter.get("/profile/:username", async (req, res) => {
   try {
     const { username } = req.params;
     const { id } = await Profile.findOne({ where: { username } });
-    const texts = await Post.findAll({ include: [Profile], order: [['createdAt', 'DESC']], where: { profileId: id } });
+    const texts = await Post.findAll({
+      include: [
+        { model: Profile, attributes: ['username', 'images'] },
+        { model: Like, include: [{ model: Profile, attributes: ['username', 'images'] }], attributes: ['profileId'] }
+      ],
+      order: [['createdAt', 'DESC']],
+      where: { profileId: id }
+    });
     res.json({ texts });
   } catch (error) {
     res.status(404).json({ message: "User not found!" });
@@ -58,14 +65,24 @@ privateRouter.get("/profile/:username", async (req, res) => {
 
 privateRouter.get("/myposts", async (req, res) => {
   const { id: profileId } = req.user.profile;
-  const texts = await (Post.findAll({ include: [Profile], order: [['createdAt', 'DESC']], where: { profileId } }));
+  const texts = await (Post.findAll({
+    include: [
+      { model: Profile, attributes: ['username', 'images'] },
+      { model: Like, include: [{ model: Profile, attributes: ['username', 'images'] }], attributes: ['profileId'] }
+    ],
+    order: [['createdAt', 'DESC']],
+    where: { profileId }
+  }));
   res.json({ texts });
 });
 
 privateRouter.get("/feed", async (req, res) => {
   const { limit, offset, time } = req.query;
   const texts = await (Post.findAll({
-    include: [Profile],
+    include: [
+      { model: Profile, attributes: ['username', 'images'] },
+      { model: Like, include: [{ model: Profile, attributes: ['username', 'images'] }], attributes: ['profileId'] }
+    ],
     order: [['createdAt', 'DESC']],
     limit,
     offset,
@@ -90,6 +107,39 @@ privateRouter.post("/post", async (req, res) => {
 
 });
 
+privateRouter.get("/post/:id/like", async (req, res) => {
+  let transaction;
+  try {
+    transaction = await db.transaction();
+    const { id: postId } = req.params;
+    const { id: profileId } = req.user.profile;
+    if (!await Post.findByPk(postId)) throw new Error("Post must be valide");
+    await Like.findOrCreate({ where: { postId, profileId }, defaults: { postId, profileId }, transaction });
+    await transaction.commit();
+    res.json(await Like.count({ where: { postId } }));
+  } catch (error) {
+    console.log(error);
+    transaction.rollback();
+    res.status(400).json({ message: "Something went wrong" });
+  }
+
+});
+privateRouter.get("/post/:id/unlike", async (req, res) => {
+  let transaction;
+  try {
+    transaction = await db.transaction();
+    const { id: postId } = req.params;
+    const { id: profileId } = req.user.profile;
+    await Like.destroy({ where: { postId, profileId } }, { transaction });
+    await transaction.commit();
+    res.json(await Like.count({ where: { postId } }));
+  } catch (error) {
+    console.log(error);
+    transaction.rollback();
+    res.status(400).json({ message: "Something went wrong" });
+  }
+
+});
 privateRouter.post("/saveimage", async (req, res) => {
   try {
     if (!req.body.length) {
@@ -109,12 +159,10 @@ privateRouter.post("/saveimage", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: "Image coud not be saved!" })
   }
-
 });
 
-
 router.get("/logout", async (req, res) => {
-  await req.logOut();
+  req.logOut();
   res.send("ok");
 })
 
@@ -129,11 +177,15 @@ router.post('/login', function (req, res, next) {
 
 router.post("/signup", async (req, res) => {
   const { email, password, name } = req.body;
+  let transaction;
   try {
-    const { id } = await User.create({ email, password });
-    const profile = await Profile.create({ userId: id, username: name });
+    transaction = await db.transaction();
+    const { id } = await User.create({ email, password }, { transaction });
+    const profile = await Profile.create({ userId: id, username: name }, { transaction });
+    transaction.commit();
     res.send(JSON.stringify(profile));
   } catch (error) {
+    transaction.rollback();
     res.status(400).send("failed to create new user");
   }
 });
