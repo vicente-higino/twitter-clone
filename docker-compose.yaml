@@ -1,0 +1,32 @@
+version: "3.1"
+
+services:
+  db:
+    image: postgres:12-alpine
+    restart: always
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: xTMYCxJv7hPw2NocSn4sAZbL9
+      POSTGRES_USER: admin
+      POSTGRES_DB: twitter-clone
+      POSTGRES_HOST_AUTH_METHOD: password
+    expose:
+      - "5432"
+  node_app:
+    build: ./server
+    volumes:
+      - images:/home/node/app/images
+    restart: always
+    depends_on:
+      - db
+    expose:
+      - "5000"
+  nginx:
+    build: ./client
+    ports:
+      - "127.0.0.1:81:80"
+
+volumes:
+  database:
+  images:

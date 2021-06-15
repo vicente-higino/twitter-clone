@@ -10,7 +10,7 @@ import { PublicProfile } from './pages/PublicProfile';
 import { Profile } from './pages/Profile';
 import { Login } from './pages/Login';
 import { PrivateRoute } from "./utils"
-
+ 
 export const url = config.url.API;
 export const StateContext = React.createContext();
 

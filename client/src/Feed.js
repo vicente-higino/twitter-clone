@@ -56,7 +56,6 @@ function ImageContainer({ images }) {
     <div ref={imgs} className="image-container">
       <Images images={images} />
     </div>
-    {images?.length > 1 && <ImagesButtons imgs={imgs} />}
   </div>
 
 }
@@ -89,19 +88,23 @@ function ImagesButtons({ imgs }) {
 }
 function Images({ images }) {
   return images.map((image, index) => {
-    if (!image) return;
-    if (image.type.startsWith("image")) return <img loading="lazy"
-      onClick={(e) => fullImg(e)}
-      className={`post-img${index == 0 ? " img-active" : ""}`}
-      src={url + image.url} key={image.url} />
-    if (image.type.startsWith("video")) return <video loading="lazy"
-      onTouchEnd={(e) => fullImg(e)}
-      onClick={(e) => fullImg(e)}
-      controls loop autoPlay muted
-      className={`post-img${index == 0 ? " img-active" : ""}`}
-      src={url + image.url} key={image.url} />
+    return <Image image={image}></Image>
   })
 
+}
+
+function Image({ image }) {
+  if (!image) return;
+  if (image.type.startsWith("image")) return <img loading="lazy"
+    /*onClick={(e) => fullImg(e)}*/
+    className="post-img"
+    src={url + image.url} key={image.url} />
+  if (image.type.startsWith("video")) return <video loading="lazy"
+    // onTouchEnd={(e) => fullImg(e)}
+    // onClick={(e) => fullImg(e)}
+    controls loop autoPlay muted
+    className="post-img"
+    src={url + image.url} key={image.url} />
 }
 
 function fullImg(e) {

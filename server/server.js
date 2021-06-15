@@ -3,7 +3,7 @@ import passport from "passport";
 import bodyparser from "body-parser"
 import session from "express-session";
 import { config } from "./auth.js";
-import { db, User, Profile, Post, Like } from "./database.js";
+import { db, User, Profile, Post, Like, Follower } from "./database.js";
 import pkg, { Sequelize } from 'sequelize';
 const { Op } = pkg;
 import fs from "fs";
@@ -11,6 +11,7 @@ import path from "path";
 import crypto from "crypto";
 import cors from 'cors';
 import FileType from 'file-type';
+
 
 const app = express();
 const router = express.Router();
@@ -78,6 +79,9 @@ privateRouter.get("/myposts", async (req, res) => {
 
 privateRouter.get("/feed", async (req, res) => {
   const { limit, offset, time } = req.query;
+  const { id: profileId } = req.user.profile;
+  const followers = (await Follower.findAll({ attributes: ['followerId'], where: { profileId } })).map((follower => follower.getDataValue("followerId")));
+  followers.push(profileId);
   const texts = await (Post.findAll({
     include: [
       { model: Profile, attributes: ['username', 'images'] },
@@ -87,6 +91,9 @@ privateRouter.get("/feed", async (req, res) => {
     limit,
     offset,
     where: {
+      profileId: {
+        [Op.in]: followers
+      },
       createdAt: {
         [Op.lte]: time || new Date().toISOString()
       }
@@ -106,7 +113,37 @@ privateRouter.post("/post", async (req, res) => {
   }
 
 });
-
+privateRouter.get("/profile/:id/follow", async (req, res) => {
+  let transaction;
+  try {
+    transaction = await db.transaction();
+    const { id: followerId } = req.params;
+    const { id: profileId } = req.user.profile;
+    if (!await Profile.findByPk(followerId) || profileId == followerId) throw new Error("Profile id not found");
+    await Follower.findOrCreate({ where: { followerId, profileId }, defaults: { followerId, profileId }, transaction });
+    await transaction.commit();
+    res.json(await Follower.count({ where: { profileId } }));
+  } catch (error) {
+    console.log(error);
+    transaction.rollback();
+    res.status(400).json({ message: "Something went wrong" });
+  }
+});
+privateRouter.get("/profile/:id/unfollow", async (req, res) => {
+  let transaction;
+  try {
+    transaction = await db.transaction();
+    const { id: followerId } = req.params;
+    const { id: profileId } = req.user.profile;
+    await Follower.destroy({ where: { followerId, profileId } }, { transaction });
+    await transaction.commit();
+    res.json(await Follower.count({ where: { profileId } }));
+  } catch (error) {
+    console.log(error);
+    transaction.rollback();
+    res.status(400).json({ message: "Something went wrong" });
+  }
+});
 privateRouter.get("/post/:id/like", async (req, res) => {
   let transaction;
   try {
