@@ -15,6 +15,12 @@ services:
       - "5432"
   node_app:
     build: ./server
+    environment:
+      POSTGRES_PASSWORD: xTMYCxJv7hPw2NocSn4sAZbL9
+      POSTGRES_USER: admin
+      POSTGRES_DB: twitter-clone
+      POSTGRES_HOST: db
+      NODE_ENV: prod
     volumes:
       - images:/home/node/app/images
     restart: always

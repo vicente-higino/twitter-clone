@@ -2,33 +2,39 @@ import express from "express";
 import passport from "passport";
 import bodyparser from "body-parser"
 import session from "express-session";
+import persist_session_pg from "connect-pg-simple";
+const pgSession = persist_session_pg(session);
 import { config } from "./auth.js";
 import { db, User, Profile, Post, Like, Follower } from "./database.js";
-import pkg, { Sequelize } from 'sequelize';
+import pkg from 'sequelize';
 const { Op } = pkg;
+const { Sequelize } = pkg;
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import cors from 'cors';
 import FileType from 'file-type';
-
-
+import dbSessionConfig from "./DBSession.js";
+dbSessionConfig();
 const app = express();
 const router = express.Router();
 const privateRouter = express.Router();
 config(passport);
 app.use(cors())
 app.use(session({
-  secret: 'VicenteHigino99',//configure um segredo seu aqui,
+  store: new pgSession({
+    conString: 'postgres://admin:xTMYCxJv7hPw2NocSn4sAZbL9@db:5432/twitter-clone',
+  }),
+  secret: '80j3d8ja8sjd83nadsadj3ij',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 30 * 60 * 1000 }//30min
+  cookie: { maxAge: 60 * 60 * 1000 * 24 * 7 } //1 week
 }))
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyparser.urlencoded({ extended: true }));
-app.use(bodyparser.json({ extended: true }));
-app.use(bodyparser.raw({ type: 'application/octet-stream', limit: '20mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ extended: true }));
+app.use(express.raw({ type: 'application/octet-stream', limit: '20mb' }));
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -113,6 +119,49 @@ privateRouter.post("/post", async (req, res) => {
   }
 
 });
+
+privateRouter.get("/myprofile/following", async (req, res) => {
+  try {
+    const { id: profileId } = req.user.profile;
+    const follows = (await Follower.findAll({
+      attributes: ['followerId'],
+      where: {
+        profileId
+      }
+    })).map((follow) => follow.getDataValue("followerId"));
+    const following = await Profile.findAll({
+      attributes: ['username', 'images'],
+      where: {
+        id: {
+          [Op.in]: follows
+        }
+      }
+    })
+    res.json(following);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Something went wrong" });
+  }
+});
+privateRouter.get("/myprofile/followers", async (req, res) => {
+  try {
+    const { id: profileId } = req.user.profile;
+    const follows = await Follower.findAll({
+      attributes: ['profileId'],
+      include: [
+        { model: Profile, attributes: ['username', 'images'] },
+      ],
+      where: {
+        followerId: profileId
+      }
+    });
+    res.json(follows);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Something went wrong" });
+  }
+});
+
 privateRouter.get("/profile/:id/follow", async (req, res) => {
   let transaction;
   try {

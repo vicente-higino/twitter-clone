@@ -16,6 +16,12 @@ services:
   node_server:
     image: node:alpine
     working_dir: /home/app
+    environment:
+      POSTGRES_PASSWORD: xTMYCxJv7hPw2NocSn4sAZbL9
+      POSTGRES_USER: admin
+      POSTGRES_DB: twitter-clone
+      POSTGRES_HOST: db
+      NODE_ENV: dev
     volumes: 
       - ./server:/home/app
     command: npm run server

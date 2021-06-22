@@ -4,8 +4,17 @@ import post from "./Post.js"
 import profile from "./Profile.js"
 import like from "./Like.js"
 import follower from "./Follower.js"
-
-export const db = new Sequelize('postgres://admin:xTMYCxJv7hPw2NocSn4sAZbL9@db:5432/twitter-clone');
+import { config } from "dotenv";
+config();
+const db_connection = {
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DB,
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  dialect: 'postgres',
+  logging: false
+};
+export const db = new Sequelize(db_connection);
 
 export const Post = post(db);
 export const User = user(db);
