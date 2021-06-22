@@ -2,13 +2,11 @@
   "name": "twitter-clone",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "client": "cd ./../client && npm run start",
     "server": "nodemon server.js",
-    "prod": "node server.js",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+    "prod": "node server.js"
   },
   "author": "",
   "license": "ISC",
