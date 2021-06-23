@@ -217,34 +217,30 @@ input[type=submit]:hover {
   left: 0;
 }
 
-.image-container {
+.carousel img {
   height: 40vh;
-  overflow: hidden;
-  overflow-x: visible;
-  display: flex;
-  background: #000;
-  border-radius: 1.2rem;
-  flex-direction: row;
-  scroll-snap-type: x mandatory;
-}
-
-.post-img {
-  width: 100%;
   object-fit: cover;
-  background-color: #000;
-  display: block;
-  scroll-snap-align: start;
+  background: black;
 }
 
-.full-img {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
+.carousel video {
+  height: 40vh;
   width: 100%;
-  object-fit: contain;
-  background-color: #000000eb;
-  z-index: 15;
+  background: black;
+}
+
+.carousel {
+  border-radius: 1.2rem;
+}
+
+ul.slider {
+  align-items: center;
+}
+
+.fullScreen {
+  position: absolute;
+  inset: 0;
+  height: 100vh;
 }
 
 .post-button {
