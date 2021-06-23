@@ -5,5 +5,4 @@ COPY package.json package.json
 RUN npm install --silent
 COPY . .
 RUN mkdir images
-ENTRYPOINT [ "node" ]
-CMD [ "server.js" ]
+CMD ["npm","run","prod"]
