@@ -1,5 +1,8 @@
 import session from "express-session";
 import persist_session_pg from "connect-pg-simple";
+import dbSessionConfig from "./DBSession.js";
+dbSessionConfig();
+
 const pgSession = persist_session_pg(session);
 
 const secrets = ['80j3d8ja8sjd83nadsadj3ij', 'WyR6HpVNjmitQW58qI3qh1K1W', 'fD8fGXRA0VCtej2igArwoKQVB',

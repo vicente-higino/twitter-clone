@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { Strategy as LocalStrategy } from "passport-local";
-import { User, Profile } from "./database.js";
+import { User, Profile } from "../DB/Database.js";
 
 export const config = (passport) => {
     function findUser(email) {

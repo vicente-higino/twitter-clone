@@ -1,12 +1,9 @@
 import express from "express";
 import passport from "passport";
-import { config } from "./auth.js";
+import { config } from "./Auth/auth.js";
 import cors from 'cors';
-import dbSessionConfig from "./DBSession.js";
-import { isAuthenticated, privateRouter, router } from "./Routes.js";
-import SessionConfig from "./SessionConfig.js";
-
-dbSessionConfig();
+import { isAuthenticated, privateRouter, router } from "./Routes/Routes.js";
+import SessionConfig from "./Auth/SessionConfig.js";
 
 const app = express();
 config(passport);

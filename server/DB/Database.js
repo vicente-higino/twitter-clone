@@ -1,9 +1,9 @@
 import Sequelize from "sequelize";
-import user from "./User.js"
-import post from "./Post.js"
-import profile from "./Profile.js"
-import like from "./Like.js"
-import follower from "./Follower.js"
+import user from "./Models/User.js"
+import post from "./Models/Post.js"
+import profile from "./Models/Profile.js"
+import like from "./Models/Like.js"
+import follower from "./Models/Follower.js"
 import { config } from "dotenv";
 config();
 const db_connection = {

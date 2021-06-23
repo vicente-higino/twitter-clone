@@ -1,4 +1,4 @@
-import { db, Post, Like } from "../database.js";
+import { db, Post, Like } from "../DB/Database.js";
 
 export async function Post_id_LikeRoute(req, res) {
   let transaction;

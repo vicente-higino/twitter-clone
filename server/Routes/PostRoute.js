@@ -1,4 +1,4 @@
-import { Post } from "../database.js";
+import { Post } from "../DB/Database.js";
 
 export async function PostRoute(req, res) {
   try {

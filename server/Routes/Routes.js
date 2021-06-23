@@ -1,5 +1,5 @@
 import express from "express";
-import * as routes from "./routes/index.js";
+import * as routes from "./index.js";
 
 export const router = express.Router();
 export const privateRouter = express.Router();

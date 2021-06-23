@@ -2,11 +2,11 @@
   "name": "twitter-clone",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "App.js",
   "type": "module",
   "scripts": {
-    "server": "nodemon server.js",
-    "prod": "node server.js"
+    "server": "nodemon App.js",
+    "prod": "node App.js"
   },
   "author": "",
   "license": "ISC",

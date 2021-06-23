@@ -1,4 +1,4 @@
-import { db, Profile, Follower } from "../database.js";
+import { db, Profile, Follower } from "../DB/Database.js";
 
 export async function Profile_id_FollowRoute(req, res) {
   let transaction;

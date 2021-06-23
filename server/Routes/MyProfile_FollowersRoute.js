@@ -1,4 +1,4 @@
-import { Profile, Follower } from "../database.js";
+import { Profile, Follower } from "../DB/Database.js";
 
 export async function MyProfile_FollowersRoute(req, res) {
   try {

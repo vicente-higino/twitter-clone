@@ -1,4 +1,4 @@
-import { db, User, Profile } from "../database.js";
+import { db, User, Profile } from "../DB/Database.js";
 
 export async function SignUpRoute(req, res) {
   const { email, password, name } = req.body;

@@ -1,4 +1,4 @@
-import { Profile, Post, Like, Follower } from "../database.js";
+import { Profile, Post, Like, Follower } from "../DB/Database.js";
 import pkg from 'sequelize';
 const { Op } = pkg;
 
