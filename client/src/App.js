@@ -5,12 +5,12 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-d
 import { LogoutButton } from './LogoutButton';
 import { NavBarItem } from './NavBarItem';
 import { SignUp } from './pages/SignUp';
-import { Home } from './pages/Home';
+import { Home } from 'pages/Home';
 import { PublicProfile } from './pages/PublicProfile';
 import { Profile } from './pages/Profile';
 import { Login } from './pages/Login';
 import { PrivateRoute } from "./utils"
- 
+
 export const url = config.url.API;
 export const StateContext = React.createContext();
 
@@ -23,7 +23,7 @@ function App() {
           <ul>
             {state.isLoggin && <>
               <NavBarItem activeOnlyWhenExact={true} to="/home" label="Home" />
-              <NavBarItem to="/myprofile" label={"@" + state.profile.username} />
+              <NavBarItem to="/myprofile" label={`@${state.profile.username}`} />
               <LogoutButton />
             </>}
             {!state.isLoggin && <>

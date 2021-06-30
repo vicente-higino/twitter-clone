@@ -237,10 +237,34 @@ ul.slider {
   align-items: center;
 }
 
-.fullScreen {
-  position: absolute;
-  inset: 0;
+img.post-img {
+  width: 100%;
+}
+
+.carousel .control-dots .dot {
+  box-shadow: 0px 0px 0px 2px #000 !important;
+}
+
+.fullScreen-container {
+  position: fixed;
+  display: flex;
+  width: 100vw;
   height: 100vh;
+  justify-content: center;
+  inset: 0;
+  background: black;
+  z-index: 15;
+}
+
+.fullScreen {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
 }
 
 .post-button {

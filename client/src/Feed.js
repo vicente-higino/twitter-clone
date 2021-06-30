@@ -7,12 +7,13 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import { Carousel } from 'react-responsive-carousel';
 export function Feed({ posts, inview }) {
   const [state] = useContext(StateContext);
+  const [fullScreen, setFullScreen] = useState();
   const feed = posts.map((post) => {
-    return <Post inview={inview} post={post} state={state} />
+    return <Post inview={inview} post={post} state={state} setFullScreen={setFullScreen} />
   });
-  return feed;
+  return <>{feed}{fullScreen && <FullScrenImage setFullScreen={setFullScreen} src={fullScreen} />}</>;
 }
-function Post({ post, state, inview }) {
+function Post({ post, state, inview, setFullScreen }) {
   const [likes, setLikes] = useState({ likes: post.likes.length, liked: isLiked(post, state) });
   return <div ref={inview} key={post.id} className="post">
     <div className="post-header">
@@ -25,21 +26,21 @@ function Post({ post, state, inview }) {
       <p className="post-sideTime">{getTimePassed(post.createdAt)}</p>
     </div>
     {post.text && <p className="post-mainText">{post.text}</p>}
-    {post?.images?.length > 0 && <Images images={post.images} />}
+    {post?.images?.length > 0 && <Images setFullScreen={setFullScreen} images={post.images} />}
     <div className="post-footer">
       <p className="post-like">{likes.likes}</p>
       <button className="post-button-like" onClick={async () => {
         if (likes.liked) {
-          const { data } = await axios.get(url + `/post/${post.id}/unlike`);
+          const { data } = await axios.get(`${url}/post/${post.id}/unlike`);
           setLikes({ likes: data, liked: false });
         } else {
-          const { data } = await axios.get(url + `/post/${post.id}/like`);
+          const { data } = await axios.get(`${url}/post/${post.id}/like`);
           setLikes({ likes: data, liked: true });
         }
 
       }} >{likes.liked ? "unlike" : "like"}</button>
     </div>
-  </div>;
+  </div>
 }
 
 function isLiked(post, state) {
@@ -51,12 +52,12 @@ function profileLink(post, state) {
   return post.profile.username === state.profile.username ? "/myprofile" : `/profile/${post.profile.username}`;
 }
 
-function Images({ images }) {
-  return <Carousel onClickItem={(i, item) => console.log(item)}
+function Images({ images, setFullScreen }) {
+  return <Carousel onClickItem={(i, item) => { disableScroll(); setFullScreen(item.props.image.url) }}
     autoPlay={false} infiniteLoop={true} showStatus={false} showThumbs={false} showIndicators={images.length > 1 ? true : false}>
     {
       images.map((image) => {
-        return <Image key={image.url} image={image}></Image>
+        return <Image key={image.url} image={image} ></Image>
       })
     }
   </Carousel >
@@ -72,6 +73,13 @@ function Image({ image }) {
     src={url + image.url} />
 }
 
-function FullScrenImage({ image }) {
-  return <img className="fullScreen" src={image.url} />
+function FullScrenImage({ src, setFullScreen }) {
+  return <div className="fullScreen-container "><img onClick={() => { enableScroll(); setFullScreen() }} className="fullScreen" src={src} /></div>
+}
+function disableScroll() {
+  document.body.classList.add("stop-scrolling");
+}
+
+function enableScroll() {
+  document.body.classList.remove("stop-scrolling");
 }

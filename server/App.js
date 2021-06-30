@@ -13,7 +13,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ extended: true }));
-app.use(express.raw({ type: 'application/octet-stream', limit: '20mb' }));
+app.use(express.raw({ type: 'application/octet-stream', limit: 1024 * 1024 * 1024 }));
 app.use('/images', isAuthenticated);
 app.use('/images', express.static('./images'));
 app.use(router);
