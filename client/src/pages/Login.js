@@ -2,14 +2,14 @@ import axios from "axios";
 import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { url, StateContext } from '../App';
-import { checkIfIsLoggedIn } from "../utils";
+import { checkIfisLoggedIn } from "../utils";
 
 export function Login(params) {
   const [data, setData] = useState({ username: "", password: "" });
   const [state, setState] = useContext(StateContext);
   let history = useHistory();
   useEffect(async () => {
-    if (await checkIfIsLoggedIn(setState, state)) history.push("/home");
+    if (await checkIfisLoggedIn(setState, state)) history.push("/home");
   }, []);
 
   function login(e) {
@@ -17,7 +17,7 @@ export function Login(params) {
     const body = new window.URLSearchParams(data).toString();
     axios.post(url + "/login", body).then(async (e) => {
       const { data: { username } } = await axios.get(url + "/profile");
-      setState({ ...state, isLoggin: true, profile: { username } });
+      setState({ ...state, isLoggedIn: true, profile: { username } });
       history.push("/myprofile");
     }).catch(() => {
       setData({ ...data, username: "Wrong login" });

@@ -1,23 +1,23 @@
 import axios from "axios";
 import { url, StateContext } from './App';
 import React, { useContext, useEffect } from "react";
-import { Route, Redirect, useLocation, useHistory, Router } from "react-router-dom";
+import { Route, useLocation, useHistory } from "react-router-dom";
 
 export function PrivateRoute({ children, ...rest }) {
   let [auth, setAuth] = useAuth();
   const loc = useLocation();
   const history = useHistory();
   useEffect(async () => {
-    if (!auth.isLoggin) {
+    if (!auth.isLoggedIn) {
       try {
-        await checkIfIsLoggedIn(setAuth, auth);
+        await checkIfisLoggedIn(setAuth, auth);
       } catch (error) {
         history.push("/login");
       }
     }
   }, [loc.pathname]);
 
-  return <>{auth.isLoggin &&
+  return <>{auth.isLoggedIn &&
     <Route {...rest}>
       {children}
     </Route>
@@ -28,9 +28,9 @@ function useAuth() {
   return useContext(StateContext);
 }
 
-export async function checkIfIsLoggedIn(setState, state) {
+export async function checkIfisLoggedIn(setState, state) {
   const { data: { username } } = await axios.post(url + "/login");
-  setState({ ...state, isLoggin: true, profile: { username } });
+  setState({ ...state, isLoggedIn: true, profile: { username } });
   return true;
 }
 
@@ -46,4 +46,11 @@ export function getTimePassed(time) {
   if (days == 0) return hours + "h";
   if (days > 7) return date.toLocaleDateString();
   return days + "d";
+}
+
+export function disableScroll() {
+  document.body.classList.add("stop-scrolling");
+}
+export function enableScroll() {
+  document.body.classList.remove("stop-scrolling");
 }

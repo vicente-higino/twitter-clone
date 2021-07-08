@@ -1,24 +1,8 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
-import { url } from './App';
+import { url } from '../App';
 import FileType from 'file-type/browser';
-async function makeUserPost(textElement, imagesUrl) {
-  const text = textElement.value;
-  const images = []
-  for (const imageUrl of imagesUrl) {
-    if (imageUrl) {
-      const { data } = await axios.post(`${url}/saveimage`, await imageUrl.file.arrayBuffer(), {
-        headers: { 'Content-Type': 'application/octet-stream' }
-      })
-      images.push(data);
-    }
-  }
-  if (images.length > 0 || text) {
-    axios.post(`${url}/post`, { text, images });
-    window.location.reload();
-  }
 
-}
 export function PostMaker(pros) {
   const textRef = useRef();
   const file = useRef();
@@ -32,6 +16,23 @@ export function PostMaker(pros) {
     <input type="file" id="select-file" accept="image/*,video/*" ref={file} onChange={(e) => filePreview(e.target.files[0], setImagesUrl, imagesUrl)} />
     <Images imagesUrl={imagesUrl} />
   </form>;
+}
+
+async function makeUserPost(textElement, imagesUrl) {
+  const text = textElement.value;
+  const images = []
+  for (const imageUrl of imagesUrl) {
+    if (imageUrl) {
+      const { data } = await axios.post(`${url}/saveimage`, await imageUrl.file.arrayBuffer(), {
+        headers: { 'Content-Type': 'application/octet-stream' }
+      })
+      images.push(data);
+    }
+  }
+  if (images.length > 0 || text) {
+    await axios.post(`${url}/post`, { text, images });
+    window.location.reload();
+  }
 }
 
 async function filePreview(file, setImagesUrl, imagesUrl) {
@@ -52,8 +53,8 @@ async function filePreview(file, setImagesUrl, imagesUrl) {
 function Images({ imagesUrl }) {
   return imagesUrl.map((image, index) => {
     if (!image) return null;
-    if (image.mime.startsWith("image")) return <img className="post-img" src={image.filePreview} key={index} />
-    if (image.mime.startsWith("video")) return <video loop autoPlay muted className="post-img" src={image.filePreview} key={index} />
+    if (image.mime.startsWith("image")) return <img className="post-img" src={image.filePreview} key={image.filePreview} />
+    if (image.mime.startsWith("video")) return <video loop autoPlay muted className="post-img" src={image.filePreview} key={image.filePreview} />
   })
 
 }

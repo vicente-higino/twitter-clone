@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { Feed } from '../Feed';
+import { Feed } from '../components/Feed';
 import { StateContext, url } from '../App';
 
 export function Profile() {
@@ -17,7 +17,7 @@ export function Profile() {
   }, []);
 
   return <>
-    {state.isLoggin && <>
+    {state.isLoggedIn && <>
       <section>
         <Feed posts={posts} />
       </section>
@@ -33,7 +33,7 @@ async function getPosts(setPosts) {
 function errorHandler(error, history, state, setState) {
   const { status } = error.response;
   if (status == 401) {
-    setState({ ...state, isLoggin: false, profile: {} });
+    setState({ ...state, isLoggedIn: false, profile: {} });
     history.push("/login");
   }
 }
