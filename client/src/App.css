@@ -252,14 +252,23 @@ img.post-img {
   height: 100vh;
   justify-content: center;
   inset: 0;
-  background: black;
+  background: #000000d9;
   z-index: 15;
+  padding: 5vh 0;
 }
 
 .fullScreen {
   height: 100%;
   width: 100%;
   object-fit: contain;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: scale(0);
+  opacity: 0;
+}
+
+.full-opacity {
+  opacity: 1;
+  transform: unset;
 }
 
 .stop-scrolling {

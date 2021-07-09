@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getTimePassed, disableScroll, enableScroll } from "../utils";
 import { url, StateContext } from "../App"
@@ -80,12 +80,14 @@ function PostFooter() {
 function Images() {
   const { setFullScreen } = useContext(FullScreenImageContext);
   const { images } = useContext(PostContext);
+  const carouselRef = React.createRef();
   const handleImageClick = (i, item) => {
     if (item.props.image.type.startsWith("video")) return;
     disableScroll();
     setFullScreen(item.props.image.url);
+    carouselRef.current.carouselWrapperRef.scrollIntoView({ behavior: 'smooth', block: 'center' })
   };
-  return images && <Carousel
+  return images && <Carousel ref={carouselRef}
     onClickItem={handleImageClick} autoPlay={false} infiniteLoop={true}
     showStatus={false} showThumbs={false} showIndicators={images.length > 1 ? true : false}>
     {
@@ -107,7 +109,11 @@ function Image({ image }) {
 
 function FullScrenImage() {
   const { fullScreen, setFullScreen } = useContext(FullScreenImageContext);
-  return <div className="fullScreen-container">
-    <img onClick={() => { enableScroll(); setFullScreen() }} className="fullScreen" src={url + fullScreen} />
+  const imgRef = React.createRef();
+  useEffect(() => {
+    imgRef.current.classList.add("full-opacity");
+  }, [fullScreen])
+  return <div className="fullScreen-container" onClick={() => { enableScroll(); setFullScreen(); }}>
+    <img ref={imgRef} className="fullScreen" src={url + fullScreen} />
   </div>
 }
