@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { config } from "./config";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { SignUp } from './pages/SignUp';
-import { Home } from '@pages/Home';
+import { Home } from './pages/Home';
 import { PublicProfile } from './pages/PublicProfile';
 import { Profile } from './pages/Profile';
 import { Login } from './pages/Login';

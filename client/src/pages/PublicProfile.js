@@ -3,16 +3,24 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { Feed } from '../components/Feed';
 import { StateContext, url } from '../App';
+import { ProfileInfo } from "../components/ProfileInfo";
 
 export function PublicProfile() {
   const [state, setState] = useContext(StateContext);
   const [posts, setPosts] = useState([]);
+  const [profile, setProfile] = useState();
   const [message, setMessage] = useState();
   let history = useHistory();
   let { username: user } = useParams();
+  const profileProps = { profile, setProfile };
+  const getPosts = async () => {
+    const { data: { texts: posts, profile } } = await axios.get(url + "/profile/" + user);
+    setPosts(posts);
+    setProfile(profile);
+  }
   useEffect(async () => {
     try {
-      await getPosts(user, setPosts);
+      await getPosts();
     } catch (error) {
       errorHandler(error, history, setMessage, setState, state);
     }
@@ -20,9 +28,11 @@ export function PublicProfile() {
 
   return <>
     {message && <h1>{message}</h1>}
-    {state.isLoggedIn && <section><Feed posts={posts} /></section>}
+    <section><ProfileInfo {...profileProps} /></section>
+    <section><Feed posts={posts} /></section>
   </>;
 }
+
 function errorHandler(error, history, setMessage, setState, state) {
   const { status } = error.response;
   if (status == 401) {
@@ -33,8 +43,4 @@ function errorHandler(error, history, setMessage, setState, state) {
     setMessage("User not found!");
 }
 
-async function getPosts(user, setPosts) {
-  const { data: { texts: posts } } = await axios.get(url + "/profile/" + user);
-  setPosts(posts);
-}
 
