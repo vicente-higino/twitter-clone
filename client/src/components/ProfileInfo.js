@@ -63,7 +63,7 @@ export function ProfileInfo({ profile, setProfile }) {
     }
   }
   return profile ? <Container>
-    <ProfileImage src={url+profile.images[0]} />
+    <ProfileImage src={url + profile.images[0]} />
     <H1>{`@${profile.username}`}</H1>
     <SpanDiv>
       <Span>{"Following: " + profile.follows}</Span>
@@ -72,3 +72,4 @@ export function ProfileInfo({ profile, setProfile }) {
     <FollowButton onClick={handleClick}>{profile.following ? "Unfollow" : "Follow"}</FollowButton>
   </Container> : null;
 }
+

@@ -12,19 +12,14 @@ html, body, div#root {
   outline: none;
 }
 
-nav ul {
-  list-style-type: none;
+nav {
   margin: 0;
   padding: 0;
   overflow: hidden;
   background-color: #333333;
 }
 
-nav li {
-  float: left;
-}
-
-nav li>a {
+nav>a {
   display: block;
   color: white;
   text-align: center;
@@ -32,11 +27,11 @@ nav li>a {
   text-decoration: none;
 }
 
-nav li>a:hover {
+nav>a:hover {
   background-color: #111111;
 }
 
-nav li>a.active {
+nav>a.active {
   border-bottom: solid 5px orange;
 }
 
@@ -278,8 +273,8 @@ li.slide img::selection {
   height: 100%;
   overflow: hidden;
 }
-:f
-.post-button {
+
+:f .post-button {
   width: 50%;
   background-color: #fe0033;
 }

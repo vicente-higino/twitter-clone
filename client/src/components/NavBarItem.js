@@ -7,8 +7,6 @@ export function NavBarItem({ label, to, activeOnlyWhenExact }) {
     exact: activeOnlyWhenExact
   });
   return (
-    <li>
       <Link className={match ? "active" : ""} to={to}>{label}</Link>
-    </li>
   );
 }
