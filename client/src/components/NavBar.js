@@ -1,20 +1,21 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { LogoutButton } from './LogoutButton';
-import { NavBarItem } from './NavBarItem';
 import { StateContext } from '../App';
+import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
+import { NavLink, useHistory } from "react-router-dom";
 import styled from "styled-components";
 export function NavBar() {
   const [state] = useContext(StateContext);
   return <Nav>
     {state.isLoggedIn && <>
-      <NavBarItem activeOnlyWhenExact={true} to="/home" label="Home" />
-      <NavBarItem to="/myprofile" label={`@${state.profile.username}`} />
+      <NavLink exact to="/home" >Home</NavLink>
+      <NavLink to="/myprofile">{`@${state.profile.username}`}</NavLink>
       <SearchBox />
       <LogoutButton />
     </>}
     {!state.isLoggedIn && <>
-      <NavBarItem to="/login" label="Login" />
-      <NavBarItem to="/signup" label="Sign Up" />
+      <NavLink to="/login" >Login</NavLink>
+      <NavLink to="/signup">Sign Up</NavLink>
     </>}
   </Nav>;
 }
@@ -31,7 +32,7 @@ margin: 0;
 box-sizing: border-box;
 border-radius: 0.6rem 0px 0px 0.6rem !important;
 padding: 0.5rem !important;
-font-size: 1.5rem  !important;
+font-size: 1rem  !important;
 font-family: inherit;
 appearance: none;
 background-clip: padding-box;
@@ -42,7 +43,7 @@ border-color: white;
 color: white;
 background-color: #ffffff33;
 display: block;
-width:30rem;
+width:20rem;
 @media (max-width: 800px) {
   &{
     display:none;
@@ -94,7 +95,7 @@ vertical-align: baseline;
 display:flex;
 flex:1;
 justify-content: center;
-height: 2.5rem;
+height: 2rem;
 @media (max-width: 800px) {
   &{
     justify-content: flex-end;
@@ -104,11 +105,17 @@ height: 2.5rem;
 `;
 
 function SearchBox({ }) {
+  let history = useHistory();
+  const inputRef = useRef();
+  const handleClick = () => {
+    const searchValue = `/profile/${inputRef.current.value}`;
+    history.push(searchValue);
 
+  }
   return <Container>
-    <SearchInput placeholder="Search" />
-    <SearchButton>
-      <svg width="100%" height="100%" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" className="ScIconSVG-sc-1bgeryd-1 cMQeyU"><g><path fill-rule="evenodd" d="M13.192 14.606a7 7 0 111.414-1.414l3.101 3.1-1.414 1.415-3.1-3.1zM14 9A5 5 0 114 9a5 5 0 0110 0z" clip-rule="evenodd"></path></g></svg>
+    <SearchInput ref={inputRef} onChange={handleClick} placeholder="Search" />
+    <SearchButton onClick={handleClick}>
+      <SearchIcon />
     </SearchButton>
   </Container>
 

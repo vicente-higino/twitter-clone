@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, useLocation } from "react-router-dom";
 import { Feed } from '../components/Feed';
 import { StateContext, url } from '../App';
 import { ProfileInfo } from "../components/ProfileInfo";
@@ -11,6 +11,7 @@ export function PublicProfile() {
   const [profile, setProfile] = useState();
   const [message, setMessage] = useState();
   let history = useHistory();
+  const location = useLocation();
   let { username: user } = useParams();
   const profileProps = { profile, setProfile };
   const getPosts = async () => {
@@ -19,12 +20,15 @@ export function PublicProfile() {
     setProfile(profile);
   }
   useEffect(async () => {
+    setMessage();
+    setPosts([]);
+    setProfile();
     try {
       await getPosts();
     } catch (error) {
       errorHandler(error, history, setMessage, setState, state);
     }
-  }, []);
+  }, [location]);
 
   return <>
     {message && <h1>{message}</h1>}
