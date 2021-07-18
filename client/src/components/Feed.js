@@ -39,15 +39,12 @@ function PostMainText() {
 function PostHeader() {
   const [{ profile }] = useContext(StateContext);
   const { profile: { username, images: [profileImageUrl] }, createdAt } = useContext(PostContext);
-  const profileLink = () => {
-    return username === profile.username ? "/myprofile" : `/profile/${username}`;
-  }
   return <div className="post-header">
-    <Link className="profile-link" to={profileLink}>
+    <Link className="profile-link" to={`/profile/${username}`}>
       <img className="post-profile-img" src={url + profileImageUrl} />
     </Link>
     <h1 className="post-username">
-      <Link className="profile-link" to={profileLink}>{`@${username}`}</Link>
+      <Link className="profile-link" to={`/profile/${username}`}>{`@${username}`}</Link>
     </h1>
     <p className="post-sideTime">{getTimePassed(createdAt)}</p>
   </div>;

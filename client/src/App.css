@@ -86,14 +86,11 @@ input[type=submit]:hover {
 }
 
 .post {
+  border-top: solid 1px #7b7b76;
   background-color: #656161;
   color: white;
   padding: 8px;
   word-break: break-all;
-}
-
-.post~.post {
-  border-top: solid 1px #7b7b76;
 }
 
 .post-mainText {

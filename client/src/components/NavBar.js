@@ -2,22 +2,25 @@ import React, { useContext, useEffect, useRef } from "react";
 import { LogoutButton } from './LogoutButton';
 import { StateContext } from '../App';
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
-import { NavLink, useHistory } from "react-router-dom";
+import { NavLink, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 export function NavBar() {
   const [state] = useContext(StateContext);
   return <Nav>
     {state.isLoggedIn && <>
       <NavLink exact to="/home" >Home</NavLink>
-      <NavLink to="/myprofile">{`@${state.profile.username}`}</NavLink>
-      <SearchBox />
+      <NavLink exact to={`/profile/${state.profile.username}`}>{`@${state.profile.username}`}</NavLink>
+      <SearchBox showInput={false} buttonRound />
       <LogoutButton />
-    </>}
-    {!state.isLoggedIn && <>
-      <NavLink to="/login" >Login</NavLink>
-      <NavLink to="/signup">Sign Up</NavLink>
-    </>}
-  </Nav>;
+    </>
+    }
+    {
+      !state.isLoggedIn && <>
+        <NavLink to="/login" >Login</NavLink>
+        <NavLink to="/signup">Sign Up</NavLink>
+      </>
+    }
+  </Nav >;
 }
 
 const Nav = styled.nav`
@@ -46,7 +49,7 @@ display: block;
 width:20rem;
 @media (max-width: 800px) {
   &{
-    display:none;
+    display: ${props => props.showInput ? "block" : "none"};
   }
 }
 `;
@@ -80,7 +83,7 @@ background-color: white;
 cursor: pointer;
 @media (max-width: 800px) {
   &{
-    border-radius:0.3rem;
+    border-radius: ${props => props.round ? "0.3rem" : "none"};
   }
 }
 `;
@@ -104,19 +107,47 @@ height: 2rem;
 }
 `;
 
-function SearchBox({ }) {
+function SearchBox({ showInput, buttonRound, focus }) {
   let history = useHistory();
   const inputRef = useRef();
-  const handleClick = () => {
+  const timeout = useRef(null);
+  const location = useLocation();
+  useEffect(() => {
+    if (focus) {
+      inputRef.current?.focus();
+    }
+  }, [])
+  const search = () => {
     const searchValue = `/profile/${inputRef.current.value}`;
     history.push(searchValue);
-
+  }
+  const handleChange = (e) => {
+    clearTimeout(timeout.current);
+    if (e.key === "Enter") {
+      search();
+    } else if (window.innerWidth >= 800) {
+      timeout.current = setTimeout(() => {
+        search();
+      }, 500);
+    }
+  }
+  const handleClick = () => {
+    if (window.innerWidth < 800 && location.pathname !== "/search") {
+      history.push("/search");
+    } else {
+      search();
+    }
   }
   return <Container>
-    <SearchInput ref={inputRef} onChange={handleClick} placeholder="Search" />
-    <SearchButton onClick={handleClick}>
+    <SearchInput showInput={showInput} ref={inputRef} onKeyUp={(e) => handleChange(e)} placeholder="Search" />
+    <SearchButton onClick={handleClick} round={buttonRound}>
       <SearchIcon />
     </SearchButton>
   </Container>
+}
 
+export function SearchPage({ }) {
+  return <section>
+    <SearchBox focus showInput buttonRound={false} />
+  </section>
 }

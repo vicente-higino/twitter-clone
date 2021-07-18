@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from 'styled-components';
 import axios from "axios";
-import { url } from "../App";
+import { url, StateContext } from "../App";
 
 const H1 = styled.h1`
     color:white;
@@ -15,7 +15,6 @@ align-items: center;
 justify-content: center;
 flex-direction: column;
 padding:1rem;
-
 `;
 
 const ProfileImage = styled.img`
@@ -50,6 +49,7 @@ const SpanDiv = styled.div`
 `;
 
 export function ProfileInfo({ profile, setProfile }) {
+  const [{ profile: {username} }] = useContext(StateContext);
   const handleClick = async () => {
     if (profile.following) {
       await axios.get(`${url}/profile/${profile.id}/unfollow`);
@@ -69,7 +69,7 @@ export function ProfileInfo({ profile, setProfile }) {
       <Span>{"Following: " + profile.follows}</Span>
       <Span>{"Followers: " + profile.followers}</Span>
     </SpanDiv>
-    <FollowButton onClick={handleClick}>{profile.following ? "Unfollow" : "Follow"}</FollowButton>
+    {username !== profile.username && <FollowButton onClick={handleClick}>{profile.following ? "Unfollow" : "Follow"}</FollowButton>}
   </Container> : null;
 }
 
