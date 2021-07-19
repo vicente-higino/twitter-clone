@@ -50,6 +50,7 @@ width:20rem;
 @media (max-width: 800px) {
   &{
     display: ${props => props.showInput ? "block" : "none"};
+    flex-grow:1;
   }
 }
 `;
@@ -84,6 +85,7 @@ cursor: pointer;
 @media (max-width: 800px) {
   &{
     border-radius: ${props => props.round ? "0.3rem" : "none"};
+    flex-shrink:0;
   }
 }
 `;
@@ -139,7 +141,7 @@ function SearchBox({ showInput, buttonRound, focus }) {
     }
   }
   return <Container>
-    <SearchInput showInput={showInput} ref={inputRef} onKeyUp={(e) => handleChange(e)} placeholder="Search" />
+    <SearchInput showInput={showInput} ref={inputRef} onKeyUp={(e) => handleChange(e)} placeholder="Search" size="1" />
     <SearchButton onClick={handleClick} round={buttonRound}>
       <SearchIcon />
     </SearchButton>

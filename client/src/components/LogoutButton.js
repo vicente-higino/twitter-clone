@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { API } from "../api/endpoints";
 import { url, StateContext } from "../App";
 
 export function LogoutButton() {
@@ -8,7 +9,7 @@ export function LogoutButton() {
     return (
         <Link className="logoutButton" onClick={() => {
             setState({ ...state, isLoggedIn: false, profile: {} });
-            axios.get(`${url}/logout`);
+            API.logout();
         }} to="">Logout</Link>
     );
 }

@@ -1,10 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import { Feed } from '../components/Feed';
 import { StateContext, url } from '../App';
 import { ProfileInfo } from "../components/ProfileInfo";
 import styled from "styled-components";
+import { API } from "../api/endpoints";
 
 export function PublicProfile() {
   const [state, setState] = useContext(StateContext);
@@ -20,7 +20,7 @@ export function PublicProfile() {
     setPosts([]);
     setProfile();
     try {
-      const { data: { texts: posts, profile } } = await axios.get(`${url}/profile/${username}`);
+      const { data: { texts: posts, profile } } = await API.getProfileByUsername(username);
       setPosts(posts);
       setProfile(profile);
     } catch (error) {
@@ -38,31 +38,28 @@ export function PublicProfile() {
   }, [location]);
 
   return <section>
-    {message && <ErrorMessage>{message}</ErrorMessage>}
+    {message && <ErrorMessage><h2>{message}</h2></ErrorMessage>}
     <ProfileInfo {...profileProps} />
     <Feed posts={posts} />
   </section>;
 }
 
-
-const H1 = styled.h2`
-    color:white;
-    margin:0;
-`;
-
 const Container = styled.div`
-background-color:#656161;
-display:flex;
-align-items: center;
-justify-content: center;
-flex-direction: column;
-padding:1rem;
+  background-color: #656161;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
+  &>h1, h2, h3, h4, h5, h6 {
+    color: white;
+    margin: 0;
+  }
 `;
-
 
 function ErrorMessage({ children }) {
   return <Container>
-    <H1>{children}</H1>
+    {children}
   </Container>
 }
 

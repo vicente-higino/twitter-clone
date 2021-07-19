@@ -1,12 +1,7 @@
 import React, { useContext } from "react";
 import styled from 'styled-components';
-import axios from "axios";
 import { url, StateContext } from "../App";
-
-const H1 = styled.h1`
-    color:white;
-    margin:0;
-`;
+import { API } from "../api/endpoints";
 
 const Container = styled.div`
 background-color:#656161;
@@ -15,10 +10,14 @@ align-items: center;
 justify-content: center;
 flex-direction: column;
 padding:1rem;
+& h1{
+  color:white;
+  margin:0;
+}
 `;
 
 const ProfileImage = styled.img`
-width: 20%;
+width: 6rem;
 aspect-ratio: 1/1;
 border-radius: 50%;
 `;
@@ -38,36 +37,41 @@ border-radius: 5px;
 `;
 
 const Span = styled.span`
-color:white;
-&:first-child{
-  margin-right: 5px;
-}
+color:#1e1e1e;
+
 `;
 
 const SpanDiv = styled.div`
   margin: 5px 0;
+  & :not(:last-child){
+  margin-right: 5px;
+}
 `;
 
+const SpanNumber = styled.span`
+  color:white;
+`;
+
+
 export function ProfileInfo({ profile, setProfile }) {
-  const [{ profile: {username} }] = useContext(StateContext);
+  const [{ profile: { username } }] = useContext(StateContext);
   const handleClick = async () => {
     if (profile.following) {
-      await axios.get(`${url}/profile/${profile.id}/unfollow`);
+      await API.unfollowProfileById(profile.id);
       const followers = profile.followers - 1;
       setProfile({ ...profile, followers, following: false });
     } else {
-      await axios.get(`${url}/profile/${profile.id}/follow`);
+      await API.followProfileById(profile.id);
       const followers = profile.followers + 1;
       setProfile({ ...profile, followers, following: true });
-
     }
   }
   return profile ? <Container>
     <ProfileImage src={url + profile.images[0]} />
-    <H1>{`@${profile.username}`}</H1>
+    <h1>{`@${profile.username}`}</h1>
     <SpanDiv>
-      <Span>{"Following: " + profile.follows}</Span>
-      <Span>{"Followers: " + profile.followers}</Span>
+      <SpanNumber>{profile.follows}</SpanNumber><Span>{"following"}</Span>
+      <SpanNumber>{profile.followers}</SpanNumber><Span>{"Followers"}</Span>
     </SpanDiv>
     {username !== profile.username && <FollowButton onClick={handleClick}>{profile.following ? "Unfollow" : "Follow"}</FollowButton>}
   </Container> : null;

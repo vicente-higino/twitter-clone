@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { API } from "../api/endpoints";
 import { url, StateContext } from '../App';
 import { checkIfisLoggedIn } from "../utils";
 
@@ -16,9 +17,9 @@ export function Login(params) {
     e.preventDefault();
     const body = new window.URLSearchParams(data).toString();
     axios.post(url + "/login", body).then(async (e) => {
-      const { data: { username } } = await axios.get(url + "/profile");
+      const { data: { username } } = await API.getUserProfile();
       setState({ ...state, isLoggedIn: true, profile: { username } });
-      history.push("/myprofile");
+      history.push("/home");
     }).catch(() => {
       setData({ ...data, username: "Wrong login" });
     });
