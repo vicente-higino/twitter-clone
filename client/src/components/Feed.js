@@ -85,7 +85,7 @@ function Images() {
     carouselRef.current.carouselWrapperRef.scrollIntoView({ behavior: 'smooth', block: 'center' })
   };
   return images && <Carousel ref={carouselRef}
-    onClickItem={handleImageClick} autoPlay={false} infiniteLoop={true}
+    onClickItem={handleImageClick} autoPlay={false} infiniteLoop={true} interval={99999999}
     showStatus={false} showThumbs={false} showIndicators={images.length > 1 ? true : false}>
     {
       images.map((image) => {
