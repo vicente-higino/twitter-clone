@@ -28,9 +28,9 @@ export function Login(params) {
   return <section>
     <form action="/" method="post" onSubmit={(e) => login(e)}>
       <label>Email</label>
-      <input type="username" value={data.username} placeholder="jon@doe.com" onChange={(e) => setData({ ...data, username: e.target.value })} />
+      <input type="username" value={data.username} placeholder="your email..." onChange={(e) => setData({ ...data, username: e.target.value })} />
       <label>Password</label>
-      <input type="password" value={data.password} placeholder="password" onChange={(e) => setData({ ...data, password: e.target.value })} />
+      <input type="password" value={data.password} placeholder="your password..." onChange={(e) => setData({ ...data, password: e.target.value })} />
       <input type="submit" value="Login" />
     </form>
   </section>;
