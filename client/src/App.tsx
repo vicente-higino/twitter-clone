@@ -11,7 +11,7 @@ import { PrivateRoute } from "./utils"
 import { NavBar, SearchPage } from './components/NavBar';
 
 export const url = config.url.API;
-export const StateContext = React.createContext();
+export const StateContext = React.createContext({});
 
 function App() {
   const [state, setState] = useState({ isLoggedIn: false, profile: {} });
