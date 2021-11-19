@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { LogoutButton } from './LogoutButton';
 import { StateContext } from '../App';
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import { NavLink, useHistory, useLocation } from "react-router-dom";
+import { disableScroll, enableScroll, toggleSroll } from "../utils"
 import styled from "styled-components";
 export function NavBar() {
   const [state] = useContext(StateContext);
@@ -109,15 +110,25 @@ height: 2rem;
 }
 `;
 
+const SearchPageSection = styled.section`
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  background-color: #4c4c4c;
+  padding-top: min(20vh,10rem);
+`;
+
 function SearchBox({ showInput, buttonRound, focus }) {
   let history = useHistory();
   const inputRef = useRef();
   const timeout = useRef(null);
   const location = useLocation();
+  const [showMobileSearchPage, setshowMobileSearchPage] = useState(false);
   useEffect(() => {
     if (focus) {
       inputRef.current?.focus();
     }
+
   }, [])
   const search = () => {
     const searchValue = `/profile/${inputRef.current.value}`;
@@ -127,6 +138,8 @@ function SearchBox({ showInput, buttonRound, focus }) {
     clearTimeout(timeout.current);
     if (e.key === "Enter") {
       search();
+      setshowMobileSearchPage(false);
+      enableScroll();
     } else if (window.innerWidth >= 800) {
       timeout.current = setTimeout(() => {
         search();
@@ -134,22 +147,38 @@ function SearchBox({ showInput, buttonRound, focus }) {
     }
   }
   const handleClick = () => {
-    if (window.innerWidth < 800 && location.pathname !== "/search") {
-      history.push("/search");
+    if (window.innerWidth < 800) {
+      if (inputRef.current.value === "") {
+        if (showMobileSearchPage) {
+          setshowMobileSearchPage(false);
+          enableScroll();
+        } else {
+          setshowMobileSearchPage(true);
+          inputRef.current?.focus();
+          disableScroll();
+        }
+      } else {
+        search();
+        setshowMobileSearchPage(false);
+        enableScroll();
+      }
     } else {
       search();
     }
   }
-  return <Container>
+  return !showMobileSearchPage ? (<Container>
     <SearchInput showInput={showInput} ref={inputRef} onKeyUp={(e) => handleChange(e)} placeholder="Search" size="1" />
     <SearchButton onClick={handleClick} round={buttonRound}>
       <SearchIcon />
     </SearchButton>
-  </Container>
-}
+  </Container >) :
+    (<SearchPageSection>
+      <Container>
+        <SearchInput showInput={"block"} ref={inputRef} onKeyUp={(e) => handleChange(e)} placeholder="Search" size="1" />
+        <SearchButton onClick={handleClick} round={false}>
+          <SearchIcon />
+        </SearchButton>
+      </Container>
+    </SearchPageSection>)
 
-export function SearchPage({ }) {
-  return <section>
-    <SearchBox focus showInput buttonRound={false} />
-  </section>
 }

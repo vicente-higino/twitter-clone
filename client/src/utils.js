@@ -49,6 +49,7 @@ export function getTimePassed(time) {
 }
 const $body = document.querySelector('body');
 let scrollPosition = 0;
+let scrollEnable = true;
 export function disableScroll() {
   scrollPosition = window.pageYOffset;
   $body.style.overflow = 'hidden';
@@ -62,4 +63,13 @@ export function enableScroll() {
   $body.style.removeProperty('top');
   $body.style.removeProperty('width');
   window.scrollTo(0, scrollPosition);
+}
+
+export function toggleSroll() {
+  if (scrollEnable) {
+    disableScroll();
+  } else {
+    enableScroll();
+  }
+  scrollEnable = !scrollEnable;
 }

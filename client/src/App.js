@@ -8,7 +8,7 @@ import { PublicProfile } from './pages/PublicProfile';
 import { Profile } from './pages/Profile';
 import { Login } from './pages/Login';
 import { PrivateRoute } from "./utils"
-import { NavBar, SearchPage } from './components/NavBar';
+import { NavBar } from './components/NavBar';
 
 export const url = config.url.API;
 export const StateContext = React.createContext();
@@ -31,9 +31,6 @@ function App() {
           </PrivateRoute>
           <PrivateRoute exact path="/profile/:username">
             <PublicProfile />
-          </PrivateRoute>
-          <PrivateRoute exact path="/search">
-            <SearchPage />
           </PrivateRoute>
           <Route exact path="/signup">
             <SignUp />
