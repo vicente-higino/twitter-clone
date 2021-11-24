@@ -1,23 +1,59 @@
-import './App.css';
-import React, { useState } from "react";
+import "./App.css";
+import React, { FC, useState } from "react";
 import { config } from "./config";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
-import { SignUp } from './pages/SignUp';
-import { Home } from './pages/Home';
-import { PublicProfile } from './pages/PublicProfile';
-import { Profile } from './pages/Profile';
-import { Login } from './pages/Login';
-import { PrivateRoute } from "./utils"
-import { NavBar, SearchPage } from './components/NavBar';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import { SignUp } from "./pages/SignUp";
+import { Home } from "./pages/Home";
+import { PublicProfile } from "./pages/PublicProfile";
+import { Login } from "./pages/Login";
+import { PrivateRoute } from "./utils";
+import { NavBar, SearchPage } from "./components/NavBar";
+
+type ProfileType = {
+  username: string;
+};
+
+interface AppState {
+  isLoggedin: boolean;
+  profile: ProfileType | undefined;
+}
 
 export const url = config.url.API;
-export const StateContext = React.createContext({});
+
+interface IStateContext {
+  state: AppState;
+  setState?: React.Dispatch<React.SetStateAction<AppState>>;
+}
+
+const defaultState: IStateContext = {
+  state: {
+    isLoggedin: false,
+    profile: { username: " " },
+  },
+};
+export const StateContext = React.createContext<IStateContext>(defaultState);
+
+export const StateContextProvider: FC = ({ children }) => {
+  const [state, setState] = useState<AppState>({
+    isLoggedin: false,
+    profile: { username: "" },
+  });
+  return (
+    <StateContext.Provider value={{ state, setState }}>
+      {children}
+    </StateContext.Provider>
+  );
+};
 
 function App() {
-  const [state, setState] = useState({ isLoggedIn: false, profile: {} });
   return (
     <Router>
-      <StateContext.Provider value={[state, setState]}>
+      <StateContextProvider>
         <NavBar />
         <Switch>
           <PrivateRoute exact path="/home">
@@ -26,9 +62,6 @@ function App() {
           <Route exact path="/login">
             <Login />
           </Route>
-          <PrivateRoute exact path="/myprofile">
-            <Profile />
-          </PrivateRoute>
           <PrivateRoute exact path="/profile/:username">
             <PublicProfile />
           </PrivateRoute>
@@ -42,9 +75,8 @@ function App() {
             <Redirect to="/home" />
           </Route>
         </Switch>
-      </StateContext.Provider>
-    </Router >
+      </StateContextProvider>
+    </Router>
   );
 }
 export default App;
-
