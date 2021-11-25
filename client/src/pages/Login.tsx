@@ -3,19 +3,15 @@ import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { API } from "../api/endpoints";
 import { url, StateContext } from "../App";
-import { checkIfisLoggedIn } from "../utils";
+import { useCheckIfIsLoggedIn } from "../utils";
 
 export function Login() {
   const [data, setData] = useState({ username: "", password: "" });
   const { state, setState } = useContext(StateContext);
   let history = useHistory();
-  useEffect(() => {
-    (async () => {
-      if (await checkIfisLoggedIn(setState, state)) history.push("/home");
-    })();
-  }, []);
+  useCheckIfIsLoggedIn();
 
-  const login = (e: React.FormEvent<HTMLFormElement>) => {
+  const login: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const body = new window.URLSearchParams(data).toString();
     axios
@@ -24,8 +20,7 @@ export function Login() {
         const {
           data: { username },
         } = await API.getUserProfile();
-        if (setState)
-          setState({ ...state, isLoggedin: true, profile: { username } });
+        setState && setState({ ...state, isLoggedin: true, profile: { username } });
         history.push("/home");
       })
       .catch(() => {

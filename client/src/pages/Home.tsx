@@ -17,7 +17,7 @@ export function Home() {
   const getPosts = async () => {
     const {
       data: { feed: posts },
-    } = await axios.get(`${url}/feed?limit=50&offset=${offset.current}`); //TODO: Add reponse type2
+    } = await axios.get<{ feed: IPost[] }>(`${url}/feed?limit=50&offset=${offset.current}`);
     setPosts((prev) => prev.concat(posts));
     offset.current += 50;
   };
@@ -29,12 +29,7 @@ export function Home() {
       } catch (error) {
         if (axios.isAxiosError(error)) {
           if (error.response?.status == 401) {
-            setState &&
-              setState({
-                ...state,
-                isLoggedin: false,
-                profile: { username: "" },
-              });
+            setState && setState({ ...state, isLoggedin: false, profile: { username: "" } });
             history.push("/login");
           }
         }
@@ -51,7 +46,7 @@ export function Home() {
 
   return (
     <section>
-      <PostMaker />
+      <PostMaker setPosts={setPosts} />
       <Feed {...props} />
     </section>
   );

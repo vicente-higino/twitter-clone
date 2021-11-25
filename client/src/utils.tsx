@@ -1,36 +1,54 @@
 import axios from "axios";
-import { url, StateContext } from "./App";
-import React, { useContext, useEffect } from "react";
-import { Route, useLocation, useHistory } from "react-router-dom";
+import { url, StateContext, AppState } from "./App";
+import React, { FC, useContext, useEffect } from "react";
+import { Route, useLocation, useHistory, RouteProps, RouterProps } from "react-router-dom";
 
-export function PrivateRoute({ children, ...rest }) {
-  let { state: auth, setState: setAuth } = useAuth();
+export const PrivateRoute: FC<RouteProps> = ({ children, ...rest }) => {
+  let { state } = useContext(StateContext);
+  useCheckIfIsLoggedIn();
+  return <>{state.isLoggedin && <Route {...rest}>{children}</Route>}</>;
+};
+
+type checkLogin = (
+  setState: React.Dispatch<React.SetStateAction<AppState>>,
+  state: AppState,
+  history: any
+) => Promise<boolean>;
+
+export const useCheckIfIsLoggedIn = () => {
+  let { state, setState } = useContext(StateContext);
   const loc = useLocation();
   const history = useHistory();
   useEffect(() => {
-    if (!auth.isLoggedin) {
-      try {
-        (async () => await checkIfisLoggedIn(setAuth, auth))();
-      } catch (error) {
-        history.push("/login");
+    (async () => {
+      if (!state.isLoggedin) {
+        try {
+          const {
+            data: { username },
+          } = await axios.post<{ username: string }>(url + "/login");
+          setState && setState({ ...state, isLoggedin: true, profile: { username } });
+        } catch (error) {
+          history.push("/login");
+        }
       }
-    }
+    })();
   }, [loc.pathname]);
+};
 
-  return <>{auth.isLoggedin && <Route {...rest}>{children}</Route>}</>;
-}
-
-function useAuth() {
-  return useContext(StateContext);
-}
-
-export async function checkIfisLoggedIn(setState, state) {
-  const {
-    data: { username },
-  } = await axios.post(url + "/login");
-  setState({ ...state, isLoggedin: true, profile: { username } });
-  return true;
-}
+export const checkIfisLoggedIn: checkLogin = async (setState, state, history) => {
+  if (!state.isLoggedin) {
+    try {
+      const {
+        data: { username },
+      } = await axios.post(url + "/login");
+      setState({ ...state, isLoggedin: true, profile: { username } });
+      return true;
+    } catch (error) {
+      history.push("/login");
+    }
+  }
+  return false;
+};
 
 export function getTimePassed(time: string) {
   const date = new Date(time);

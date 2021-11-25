@@ -2,7 +2,7 @@ import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import { LogoutButton } from "./LogoutButton";
 import { StateContext } from "../App";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
-import { NavLink, useHistory, useLocation } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import { disableScroll, enableScroll } from "../utils";
 import styled from "styled-components";
 
@@ -10,7 +10,7 @@ export function NavBar() {
   const { state } = useContext(StateContext);
   return (
     <Nav>
-      {state.isLoggedin && (
+      {state.isLoggedin ? (
         <>
           <FlexConteiner>
             <NavLinkStyled exact to="/home">
@@ -26,8 +26,7 @@ export function NavBar() {
             <LogoutButton />
           </div>
         </>
-      )}
-      {!state.isLoggedin && (
+      ) : (
         <FlexConteiner>
           <NavLinkStyled to="/login">Login</NavLinkStyled>
           <NavLinkStyled to="/signup">Sign Up</NavLinkStyled>
@@ -228,13 +227,7 @@ const SearchBox: FC<{
   ) : (
     <SearchPageSection>
       <Container>
-        <SearchInput
-          showInput
-          ref={inputRef}
-          onKeyUp={(e) => handleChange(e)}
-          placeholder="Search"
-          size={1}
-        />
+        <SearchInput showInput ref={inputRef} onKeyUp={(e) => handleChange(e)} placeholder="Search" size={1} />
         <SearchButton onClick={handleClick} round={false}>
           <SearchIcon />
         </SearchButton>

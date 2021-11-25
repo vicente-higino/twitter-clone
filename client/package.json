@@ -5,6 +5,7 @@
   "proxy": "http://node_server:5000",
   "homepage": "/",
   "dependencies": {
+    "@types/history": "^4.7.9",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.2",
     "@types/react": "^17.0.31",

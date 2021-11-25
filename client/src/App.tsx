@@ -1,12 +1,7 @@
 import "./App.css";
 import React, { FC, useState } from "react";
 import { config } from "./config";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { SignUp } from "./pages/SignUp";
 import { Home } from "./pages/Home";
 import { PublicProfile } from "./pages/PublicProfile";
@@ -18,7 +13,7 @@ type ProfileType = {
   username: string;
 };
 
-interface AppState {
+export interface AppState {
   isLoggedin: boolean;
   profile: ProfileType | undefined;
 }
@@ -43,11 +38,7 @@ export const StateContextProvider: FC = ({ children }) => {
     isLoggedin: false,
     profile: { username: "" },
   });
-  return (
-    <StateContext.Provider value={{ state, setState }}>
-      {children}
-    </StateContext.Provider>
-  );
+  return <StateContext.Provider value={{ state, setState }}>{children}</StateContext.Provider>;
 };
 
 function App() {

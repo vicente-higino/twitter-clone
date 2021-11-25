@@ -3,6 +3,7 @@ import axios from "axios";
 import { url } from "../App";
 import FileType from "file-type/browser";
 import core from "file-type/core";
+import { IPost } from "../api/ProfileByUsername";
 
 interface IImagesUrl {
   filePreview: string;
@@ -10,7 +11,7 @@ interface IImagesUrl {
   mime: core.MimeType;
 }
 
-export const PostMaker: FC = () => {
+export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost[]>> }> = ({ setPosts }) => {
   const textRef = useRef<HTMLTextAreaElement | null>(null);
   const file = useRef<HTMLInputElement | null>(null);
   const [text, setText] = useState<string>();
@@ -24,10 +25,7 @@ export const PostMaker: FC = () => {
     try {
       const filePreview = window.URL.createObjectURL(file);
       const filetype = await FileType.fromBlob(file);
-      if (
-        filetype?.mime.startsWith("image") ||
-        filetype?.mime.startsWith("video")
-      ) {
+      if (filetype?.mime.startsWith("image") || filetype?.mime.startsWith("video")) {
         const { mime } = filetype;
         setImagesUrl([{ filePreview, file, mime }].concat(imagesUrl));
       } else alert("Only images or videos allowed!");
@@ -40,7 +38,25 @@ export const PostMaker: FC = () => {
       onSubmit={(e) => {
         e.preventDefault();
         if (textRef.current) {
-          makeUserPost(textRef.current.value, imagesUrl);
+          (async () => {
+            try {
+              textRef.current && (await makeUserPost(textRef.current.value, imagesUrl, setPosts));
+              setText("");
+              for (const imgUrl of imagesUrl) {
+                window.URL.revokeObjectURL(imgUrl.filePreview);
+              }
+              setImagesUrl([]);
+            } catch (error) {
+              if (axios.isAxiosError(error)) {
+                alert("Something went wrong");
+                setText("");
+                for (const imgUrl of imagesUrl) {
+                  window.URL.revokeObjectURL(imgUrl.filePreview);
+                }
+                setImagesUrl([]);
+              }
+            }
+          })();
         }
       }}
     >
@@ -76,24 +92,26 @@ interface ISaveImageReponse {
   url: string;
   type: string;
 }
-async function makeUserPost(textElement: string, imagesUrl: IImagesUrl[]) {
+async function makeUserPost(
+  textElement: string,
+  imagesUrl: IImagesUrl[],
+  setPost: React.Dispatch<React.SetStateAction<IPost[]>>
+) {
   const text = textElement;
   const images: ISaveImageReponse[] = [];
   for (const imageUrl of imagesUrl) {
     if (imageUrl) {
-      const { data } = await axios.post<ISaveImageReponse>(
-        `${url}/saveimage`,
-        await imageUrl.file.arrayBuffer(),
-        {
-          headers: { "Content-Type": "application/octet-stream" },
-        }
-      );
+      const { data } = await axios.post<ISaveImageReponse>(`${url}/saveimage`, await imageUrl.file.arrayBuffer(), {
+        headers: { "Content-Type": "application/octet-stream" },
+      });
       images.push(data);
     }
   }
   if (images.length > 0 || text) {
-    await axios.post(`${url}/post`, { text, images });
-    window.location.reload(); //TODO: Change this to not need reload the page when creating a new post
+    const {
+      data: { post },
+    } = await axios.post<{ post: IPost }>(`${url}/post`, { text, images });
+    setPost((prev) => [post].concat(prev));
   }
 }
 
@@ -102,24 +120,9 @@ const Images: FC<{ imagesUrl: IImagesUrl[] }> = ({ imagesUrl }) => {
     <div>
       {imagesUrl.flatMap((image) => {
         if (image.mime.startsWith("image"))
-          return (
-            <img
-              className="post-img"
-              src={image.filePreview}
-              key={image.filePreview}
-            />
-          );
+          return <img className="post-img" src={image.filePreview} key={image.filePreview} />;
         else if (image.mime.startsWith("video"))
-          return (
-            <video
-              loop
-              autoPlay
-              muted
-              className="post-img"
-              src={image.filePreview}
-              key={image.filePreview}
-            />
-          );
+          return <video loop autoPlay muted className="post-img" src={image.filePreview} key={image.filePreview} />;
         else return [];
       })}
     </div>

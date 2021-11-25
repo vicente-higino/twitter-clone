@@ -5,7 +5,8 @@ const { Op } = pkg;
 export async function FeedRoute(req, res) {
   const { limit, offset, time } = req.query;
   const { id: profileId } = req.user.profile;
-  const followers = (await Follower.findAll({ attributes: ['followerId'], where: { profileId } })).map((follower => follower.getDataValue("followerId")));
+  const followers = (await Follower.findAll({ attributes: ['followerId'], where: { profileId } }))
+    .map((follower => follower.getDataValue("followerId")));
   followers.push(profileId);
   const texts = await (Post.findAll({
     include: [
