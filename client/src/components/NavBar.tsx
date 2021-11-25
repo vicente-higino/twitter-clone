@@ -28,10 +28,10 @@ export function NavBar() {
         </>
       )}
       {!state.isLoggedin && (
-        <>
+        <FlexConteiner>
           <NavLinkStyled to="/login">Login</NavLinkStyled>
           <NavLinkStyled to="/signup">Sign Up</NavLinkStyled>
-        </>
+        </FlexConteiner>
       )}
     </Nav>
   );
