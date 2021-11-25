@@ -1,8 +1,9 @@
-import React, { FC, useContext, useEffect, useRef } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import { LogoutButton } from "./LogoutButton";
 import { StateContext } from "../App";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import { NavLink, useHistory, useLocation } from "react-router-dom";
+import { disableScroll, enableScroll } from "../utils";
 import styled from "styled-components";
 
 export function NavBar() {
@@ -11,36 +12,68 @@ export function NavBar() {
     <Nav>
       {state.isLoggedin && (
         <>
-          <NavLink exact to="/home">
-            Home
-          </NavLink>
-          <NavLink
-            exact
-            to={`/profile/${state.profile?.username}`}
-          >{`@${state.profile?.username}`}</NavLink>
+          <FlexConteiner>
+            <NavLinkStyled exact to="/home">
+              Home
+            </NavLinkStyled>
+            <NavLinkStyled
+              exact
+              to={`/profile/${state.profile?.username}`}
+            >{`@${state.profile?.username}`}</NavLinkStyled>
+          </FlexConteiner>
           <SearchBox showInput={false} buttonRound />
-          <LogoutButton />
+          <div>
+            <LogoutButton />
+          </div>
         </>
       )}
       {!state.isLoggedin && (
         <>
-          <NavLink to="/login">Login</NavLink>
-          <NavLink to="/signup">Sign Up</NavLink>
+          <NavLinkStyled to="/login">Login</NavLinkStyled>
+          <NavLinkStyled to="/signup">Sign Up</NavLinkStyled>
         </>
       )}
     </Nav>
   );
 }
 
-const Nav = styled.nav`
+const FlexConteiner = styled.div`
   display: flex;
-  align-items: center;
+`;
+const NavLinkStyled = styled(NavLink)`
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 16px;
+  text-decoration: none;
+
+  &:hover {
+    background-color: #111111;
+  }
+
+  &.active {
+    border-bottom: solid 5px orange;
+  }
+`;
+
+const Nav = styled.nav`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333333;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  @media (max-width: 800px) {
+    grid-template-columns: auto 1fr auto;
+  }
 `;
 
 const SearchInput = styled.input<{ showInput?: boolean }>`
   text-size-adjust: 100%;
   margin: 0;
-  size: 1;
   box-sizing: border-box;
   border-radius: 0.6rem 0px 0px 0.6rem !important;
   padding: 0.5rem !important;
@@ -110,12 +143,21 @@ const Container = styled.div`
   flex: 1;
   justify-content: center;
   height: 2rem;
+  align-self: center;
   @media (max-width: 800px) {
     & {
       justify-content: flex-end;
       padding: 0 0.3rem;
     }
   }
+`;
+
+const SearchPageSection = styled.section`
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  background-color: #4c4c4c;
+  padding-top: min(20vh, 10rem);
 `;
 
 const SearchBox: FC<{
@@ -126,23 +168,22 @@ const SearchBox: FC<{
   let history = useHistory();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const timeout = useRef<number | null>(null);
-  const location = useLocation();
+  const [showMobileSearchPage, setshowMobileSearchPage] = useState(false);
   useEffect(() => {
     if (focus) {
       inputRef.current?.focus();
     }
   }, []);
   const search = () => {
-    const inputValue = inputRef?.current?.value;
-    if (inputValue && inputValue.length > 0) {
-      const searchValue = `/profile/${inputValue}`;
-      history.push(searchValue);
-    }
+    const searchValue = `/profile/${inputRef?.current?.value}`;
+    history.push(searchValue);
   };
   const handleChange: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
     timeout.current && clearTimeout(timeout.current);
     if (e.key === "Enter") {
       search();
+      setshowMobileSearchPage(false);
+      enableScroll();
     } else if (window.innerWidth >= 800) {
       timeout.current = window.setTimeout(() => {
         search();
@@ -150,31 +191,54 @@ const SearchBox: FC<{
     }
   };
   const handleClick = () => {
-    if (window.innerWidth < 800 && location.pathname !== "/search") {
-      history.push("/search");
+    if (window.innerWidth < 800) {
+      if (inputRef?.current?.value === "") {
+        if (showMobileSearchPage) {
+          setshowMobileSearchPage(false);
+          enableScroll();
+        } else {
+          setshowMobileSearchPage(true);
+          inputRef.current?.focus();
+          disableScroll();
+        }
+      } else {
+        search();
+        setshowMobileSearchPage(false);
+        enableScroll();
+      }
     } else {
-      search();
+      if (inputRef?.current && inputRef.current.value.length > 0) {
+        search();
+      }
     }
   };
-  return (
+  return !showMobileSearchPage ? (
     <Container>
       <SearchInput
         showInput={showInput}
         ref={inputRef}
         onKeyUp={(e) => handleChange(e)}
         placeholder="Search"
+        size={1}
       />
       <SearchButton onClick={handleClick} round={buttonRound}>
         <SearchIcon />
       </SearchButton>
     </Container>
+  ) : (
+    <SearchPageSection>
+      <Container>
+        <SearchInput
+          showInput
+          ref={inputRef}
+          onKeyUp={(e) => handleChange(e)}
+          placeholder="Search"
+          size={1}
+        />
+        <SearchButton onClick={handleClick} round={false}>
+          <SearchIcon />
+        </SearchButton>
+      </Container>
+    </SearchPageSection>
   );
 };
-
-export function SearchPage({}) {
-  return (
-    <section>
-      <SearchBox focus showInput buttonRound={false} />
-    </section>
-  );
-}

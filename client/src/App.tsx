@@ -12,7 +12,7 @@ import { Home } from "./pages/Home";
 import { PublicProfile } from "./pages/PublicProfile";
 import { Login } from "./pages/Login";
 import { PrivateRoute } from "./utils";
-import { NavBar, SearchPage } from "./components/NavBar";
+import { NavBar } from "./components/NavBar";
 
 type ProfileType = {
   username: string;
@@ -64,9 +64,6 @@ function App() {
           </Route>
           <PrivateRoute exact path="/profile/:username">
             <PublicProfile />
-          </PrivateRoute>
-          <PrivateRoute exact path="/search">
-            <SearchPage />
           </PrivateRoute>
           <Route exact path="/signup">
             <SignUp />

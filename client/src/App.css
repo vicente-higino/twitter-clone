@@ -12,34 +12,7 @@ html, body, div#root {
   outline: none;
 }
 
-nav {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #333333;
-}
 
-nav>a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 16px;
-  text-decoration: none;
-}
-
-nav>a:hover {
-  background-color: #111111;
-}
-
-nav>a.active {
-  border-bottom: solid 5px orange;
-}
-
-nav {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
 
 input[type=password], input[type=username], input[type=text] {
   width: 100%;
@@ -80,10 +53,7 @@ input[type=submit]:hover {
   cursor: pointer;
 }
 
-.logoutButton {
-  float: right;
-  border: 2px solid white;
-}
+
 
 .post {
   border-top: solid 1px #7b7b76;

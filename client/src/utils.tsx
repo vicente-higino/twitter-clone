@@ -47,6 +47,7 @@ export function getTimePassed(time: string) {
 }
 const $body = document.querySelector("body");
 let scrollPosition = 0;
+let scrollEnable = true;
 export function disableScroll() {
   scrollPosition = window.pageYOffset;
   if ($body) {
@@ -64,4 +65,13 @@ export function enableScroll() {
     $body.style.removeProperty("width");
     window.scrollTo(0, scrollPosition);
   }
+}
+
+export function toggleSroll() {
+  if (scrollEnable) {
+    disableScroll();
+  } else {
+    enableScroll();
+  }
+  scrollEnable = !scrollEnable;
 }
