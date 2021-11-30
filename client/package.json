@@ -5,6 +5,10 @@
   "proxy": "http://node_server:5000",
   "homepage": "/",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.16",
     "@types/history": "^4.7.9",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.2",

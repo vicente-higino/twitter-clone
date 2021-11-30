@@ -12,7 +12,6 @@ interface IImagesUrl {
 }
 
 export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost[]>> }> = ({ setPosts }) => {
-  const textRef = useRef<HTMLTextAreaElement | null>(null);
   const file = useRef<HTMLInputElement | null>(null);
   const [text, setText] = useState<string>();
   const [imagesUrl, setImagesUrl] = useState<IImagesUrl[]>([]);
@@ -33,37 +32,33 @@ export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost
       alert("Something went wrong!");
     }
   };
+  const clearForm = () => {
+    setText("");
+    for (const imgUrl of imagesUrl) {
+      window.URL.revokeObjectURL(imgUrl.filePreview);
+    }
+    setImagesUrl([]);
+  };
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (textRef.current) {
-          (async () => {
-            try {
-              textRef.current && (await makeUserPost(textRef.current.value, imagesUrl, setPosts));
-              setText("");
-              for (const imgUrl of imagesUrl) {
-                window.URL.revokeObjectURL(imgUrl.filePreview);
-              }
-              setImagesUrl([]);
-            } catch (error) {
-              if (axios.isAxiosError(error)) {
-                alert("Something went wrong");
-                setText("");
-                for (const imgUrl of imagesUrl) {
-                  window.URL.revokeObjectURL(imgUrl.filePreview);
-                }
-                setImagesUrl([]);
-              }
+        (async () => {
+          try {
+            text && (await makeUserPost(text, imagesUrl, setPosts));
+            clearForm();
+          } catch (error) {
+            if (axios.isAxiosError(error)) {
+              alert("Something went wrong");
+              clearForm();
             }
-          })();
-        }
+          }
+        })();
       }}
     >
       <textarea
         className="post-maker"
         placeholder="Write something..."
-        ref={textRef}
         value={text}
         onChange={(e) => {
           validate(e.target.value);

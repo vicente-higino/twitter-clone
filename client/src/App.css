@@ -122,28 +122,8 @@ input[type=submit]:hover {
 }
 
 .post-like {
-  display: inline-block;
-  margin: 0 5px;
-}
-
-.post-like::after {
-  content: " ❤";
-}
-
-.post-button-like {
-  font-size: 0.7rem;
-  padding: 0.6em;
-  background: none;
-  color: white;
-  text-transform: uppercase;
-  border: 2px solid white;
-  border-radius: 5px;
-  min-width: 100px;
-}
-
-.post-button-like:hover {
-  cursor: pointer;
-  background: #00000036;
+  font-size: 1.2rem;
+  margin: 0;
 }
 
 #select-file {
@@ -260,6 +240,7 @@ li.slide img::selection {
   section {
     margin: 4px 5px;
   }
+
   .post-button-like:hover {
     background: initial;
   }
