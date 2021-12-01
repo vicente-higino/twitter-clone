@@ -22,9 +22,7 @@ export function NavBar() {
             >{`@${state.profile?.username}`}</NavLinkStyled>
           </FlexConteiner>
           <SearchBox showInput={false} buttonRound />
-          <div>
-            <LogoutButton />
-          </div>
+          <LogoutButton />
         </>
       ) : (
         <FlexConteiner>

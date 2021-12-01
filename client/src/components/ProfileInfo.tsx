@@ -75,7 +75,7 @@ export const ProfileInfo: FC<{
       <h1>{`@${profile.username}`}</h1>
       <SpanDiv>
         <SpanNumber>{profile.follows}</SpanNumber>
-        <Span>{"following"}</Span>
+        <Span>{"Following"}</Span>
         <SpanNumber>{profile.followers}</SpanNumber>
         <Span>{"Followers"}</Span>
       </SpanDiv>
