@@ -9,6 +9,7 @@ import { ImagesEntity, IPost } from "../api/ProfileByUsername";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as farHeart } from "@fortawesome/free-regular-svg-icons";
+import styled from "styled-components";
 
 type inviewRef = (node?: Element | null | undefined) => void;
 
@@ -57,8 +58,29 @@ const Post: FC<{
   );
 };
 
+const MainText = styled.p<{ collapsed: boolean }>`
+  white-space: pre-line;
+  max-height: ${({ collapsed }) => (collapsed ? "150px" : "1000px")};
+  overflow-y: hidden;
+  word-break: break-word;
+  margin: 0;
+  font-size: 1.2em;
+  line-height: 1.2;
+  transition: max-height 0.5s ease-in;
+`;
+
 const PostText: FC<{ post: IPost }> = ({ post }) => {
-  return post.text.length > 0 ? <p className="post-mainText">{post.text}</p> : null;
+  const [collapsed, setCollapsed] = useState(true);
+  return post.text.length > 0 ? (
+    <MainText
+      onClick={() => {
+        setCollapsed((prev) => !prev);
+      }}
+      collapsed={collapsed}
+    >
+      {post.text}
+    </MainText>
+  ) : null;
 };
 
 const PostHeader: FC<{
@@ -109,10 +131,6 @@ const PostFooter: FC<{
         {likes.liked ? <FontAwesomeIcon icon={faHeart} color="red" /> : <FontAwesomeIcon icon={farHeart} />}
         <span> {likes.likes}</span>
       </p>
-      {/* <p className="post-like">{likes.likes}</p> */}
-      {/* <button className="post-button-like" onClick={handleLikes}>
-        {likes.liked ? "unlike" : "like"}
-      </button> */}
     </div>
   );
 };
