@@ -15,6 +15,7 @@ export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost
   const file = useRef<HTMLInputElement | null>(null);
   const [text, setText] = useState<string>();
   const [imagesUrl, setImagesUrl] = useState<IImagesUrl[]>([]);
+  const [creatingPost, setCreatingPost] = useState(false);
   const validate = (value: string) => {
     if (value.length <= 256) {
       setText(value);
@@ -43,36 +44,39 @@ export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost
     <form
       onSubmit={(e) => {
         e.preventDefault();
+        setCreatingPost(true);
         (async () => {
           try {
             text && (await makeUserPost(text, imagesUrl, setPosts));
-            clearForm();
           } catch (error) {
             if (axios.isAxiosError(error)) {
               alert("Something went wrong");
-              clearForm();
             }
           }
+          setCreatingPost(false);
+          clearForm();
         })();
       }}
     >
       <textarea
         className="post-maker"
         placeholder="Write something..."
+        disabled={creatingPost}
         value={text}
         onChange={(e) => {
           validate(e.target.value);
         }}
       />
       <p className="form-text-length">{`${text ? text.length : 0}/256`}</p>
-      <input type="submit" className="post-button" value="Post" />
-      <label className="select-file" htmlFor="select-file">
+      <input disabled={creatingPost} type="submit" className="post-button" value="Post" />
+      <label aria-disabled={creatingPost} className="select-file" htmlFor="select-file">
         Select Images
       </label>
       <input
         type="file"
         id="select-file"
         accept="image/*,video/*"
+        disabled={creatingPost}
         ref={file}
         onChange={(e) => {
           const file = e.target.files?.item(0);

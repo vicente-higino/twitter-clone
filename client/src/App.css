@@ -24,9 +24,29 @@ label {
   color: white;
 }
 
-label.select-file:hover {
+.select-file:hover {
   background-color: #3e3e3e;
   cursor: pointer;
+}
+
+
+#select-file {
+  display: none;
+}
+
+.select-file[aria-disabled=true] {
+  background-color: #5c5c5c;
+  color: #a5a5a5;
+  border: 1px solid;
+  cursor: not-allowed;
+}
+
+.select-file {
+  display: block;
+  text-align: center;
+  border: 1px solid white;
+  border-radius: 5px;
+  margin: 5px 20px;
 }
 
 section {
@@ -47,6 +67,15 @@ input[type=submit] {
   border: none;
   border-radius: 5px;
   min-height: 40px;
+}
+
+input[type=submit]:disabled {
+  background-color: #5c5c5c;
+  color: #a5a5a5;
+}
+
+input[type=submit]:disabled:hover {
+  cursor: not-allowed;
 }
 
 input[type=submit]:hover {
@@ -119,17 +148,6 @@ input[type=submit]:hover {
   cursor: pointer;
 }
 
-#select-file {
-  display: none;
-}
-
-.select-file {
-  display: block;
-  text-align: center;
-  border: 1px solid white;
-  border-radius: 5px;
-  margin: 5px 20px;
-}
 
 .img-button {
   position: absolute;
