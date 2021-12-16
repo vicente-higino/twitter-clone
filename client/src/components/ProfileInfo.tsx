@@ -71,7 +71,7 @@ export const ProfileInfo: FC<{
   };
   return profile ? (
     <Container>
-      <ProfileImage src={url + profile.images?.at(0)} />
+      {profile.images && <ProfileImage src={url + profile.images[0]} />}
       <h1>{`@${profile.username}`}</h1>
       <SpanDiv>
         <SpanNumber>{profile.follows}</SpanNumber>
