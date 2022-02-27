@@ -14,11 +14,13 @@ export function Home() {
   const offset = useRef(0);
   let history = useHistory();
   const props = { inviewRef: ref, posts };
+  const addPosts = (posts: IPost[]) => setPosts((prev) => prev.concat(posts));
+  const unshiftPost = (post: IPost) => setPosts((prev) => [post, ...prev]);
   const getPosts = async () => {
     const {
       data: { feed: posts },
     } = await axios.get<{ feed: IPost[] }>(`${url}/feed?limit=50&offset=${offset.current}`);
-    setPosts((prev) => prev.concat(posts));
+    addPosts(posts);
     offset.current += 50;
   };
 
@@ -46,7 +48,7 @@ export function Home() {
 
   return (
     <section>
-      <PostMaker setPosts={setPosts} />
+      <PostMaker addPost={unshiftPost} />
       <Feed {...props} />
     </section>
   );

@@ -11,9 +11,9 @@ interface IImagesUrl {
   mime: core.MimeType;
 }
 
-export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost[]>> }> = ({ setPosts }) => {
+export const PostMaker: FC<{ addPost: (post: IPost) => void }> = ({ addPost }) => {
   const file = useRef<HTMLInputElement | null>(null);
-  const [text, setText] = useState<string>();
+  const [text, setText] = useState<string>("");
   const [imagesUrl, setImagesUrl] = useState<IImagesUrl[]>([]);
   const [creatingPost, setCreatingPost] = useState(false);
   const validate = (value: string) => {
@@ -40,6 +40,24 @@ export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost
     }
     setImagesUrl([]);
   };
+  const makeUserPost = async (textElement: string, imagesUrl: IImagesUrl[]) => {
+    const text = textElement;
+    const images: ISaveImageReponse[] = [];
+    for (const imageUrl of imagesUrl) {
+      if (imageUrl) {
+        const { data } = await axios.post<ISaveImageReponse>(`${url}/saveimage`, await imageUrl.file.arrayBuffer(), {
+          headers: { "Content-Type": "application/octet-stream" },
+        });
+        images.push(data);
+      }
+    }
+    if (images.length > 0 || text) {
+      const {
+        data: { post },
+      } = await axios.post<{ post: IPost }>(`${url}/post`, { text, images });
+      addPost(post);
+    }
+  };
   return (
     <form
       onSubmit={(e) => {
@@ -47,10 +65,10 @@ export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost
         setCreatingPost(true);
         (async () => {
           try {
-            text && (await makeUserPost(text, imagesUrl, setPosts));
+            await makeUserPost(text, imagesUrl);
           } catch (error) {
             if (axios.isAxiosError(error)) {
-              alert("Something went wrong");
+              alert("Something went wrong creating the post");
             }
           }
           setCreatingPost(false);
@@ -90,28 +108,6 @@ export const PostMaker: FC<{ setPosts: React.Dispatch<React.SetStateAction<IPost
 interface ISaveImageReponse {
   url: string;
   type: string;
-}
-async function makeUserPost(
-  textElement: string,
-  imagesUrl: IImagesUrl[],
-  setPost: React.Dispatch<React.SetStateAction<IPost[]>>
-) {
-  const text = textElement;
-  const images: ISaveImageReponse[] = [];
-  for (const imageUrl of imagesUrl) {
-    if (imageUrl) {
-      const { data } = await axios.post<ISaveImageReponse>(`${url}/saveimage`, await imageUrl.file.arrayBuffer(), {
-        headers: { "Content-Type": "application/octet-stream" },
-      });
-      images.push(data);
-    }
-  }
-  if (images.length > 0 || text) {
-    const {
-      data: { post },
-    } = await axios.post<{ post: IPost }>(`${url}/post`, { text, images });
-    setPost((prev) => [post].concat(prev));
-  }
 }
 
 const Images: FC<{ imagesUrl: IImagesUrl[] }> = ({ imagesUrl }) => {
