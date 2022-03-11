@@ -4,8 +4,8 @@ A not so good copy of twitter.
 
 ## Develoment
 
-Run: `$ docker-compose -f docker-compose.override.yaml -d --build`
+Run: `$ docker-compose -f docker-compose.override.yaml up -d --build`
 
 ## Production
 
-Run: `$ docker-compose -f docker-compose.yaml -d --build`
+Run: `$ docker-compose -f docker-compose.yaml up -d --build`

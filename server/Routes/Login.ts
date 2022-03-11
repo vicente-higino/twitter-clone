@@ -1,8 +1,9 @@
+import { Handler } from "express";
 import passport from "passport";
 
-export function LoginRoute(req, res, next) {
+export const Login: Handler = async (req, res, next) => {
   if (req.isAuthenticated()) {
-    const { username } = req.user.profile;
+    const { username } = await req.user.getProfile();
     res.json({ username });
   } else {
     passport.authenticate('local', function (err, user, info) {
