@@ -1,20 +1,28 @@
 import bcrypt from "bcryptjs";
+import { PassportStatic } from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { User, Profile } from "../DB/Database.js";
+import { User as Userr } from "../DB/Models/User";
+import { Profile } from "../DB/Models/Profile";
 
-export const config = (passport) => {
-    function findUser(email) {
-        return User.findOne({ where: { email }, include: [Profile] });
+declare global {
+    namespace Express {
+        interface User extends Userr {
+        }
+    }
+}
+export const config = (passport: PassportStatic) => {
+    function findUser(email: string) {
+        return Userr.findOne({ where: { email }, include: [Profile] });
     }
 
-    function findUserById(id) {
-        return User.findByPk(id, { include: [Profile] });
+    function findUserById(id: number) {
+        return Userr.findByPk(id, { include: [Profile] });
     }
     passport.serializeUser((user, done) => {
         done(null, user.id);
     });
 
-    passport.deserializeUser(async (id, done) => {
+    passport.deserializeUser(async (id: number, done) => {
         try {
             const user = await findUserById(id);
             done(null, user);

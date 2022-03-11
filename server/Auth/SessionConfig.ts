@@ -1,12 +1,12 @@
 import session from "express-session";
 import persist_session_pg from "connect-pg-simple";
-import dbSessionConfig from "./DBSession.js";
+import dbSessionConfig from "./DBSession";
 dbSessionConfig();
 
 const pgSession = persist_session_pg(session);
 
-const secrets = ['80j3d8ja8sjd83nadsadj3ij', 'WyR6HpVNjmitQW58qI3qh1K1W', 'fD8fGXRA0VCtej2igArwoKQVB',
-  'pR8uMl03iExN4bCQlh1lrvHzv', 'WSi3a0FoHX5UMGp2WbHBjhlql'];
+const secrets = ['WyR6HpVNjmitQW58qI3qh1K1W', 'fD8fGXRA0VCtej2igArwoKQVB',
+  'pR8uMl03iExN4bCQlh1lrvHzv', 'WSi3a0FoHX5UMGp2WbHBjhlql', '80j3d8ja8sjd83nadsadj3ij',];
 
 export default session({
   store: new pgSession({

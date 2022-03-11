@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "App.js",
-  "type": "module",
   "scripts": {
-    "server": "nodemon App.js",
-    "prod": "node App.js"
+    "dev": "tsc -w",
+    "server": "nodemon dist/App.js",
+    "prod": "node dist/App.js"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +26,13 @@
     "sequelize": "^6.5.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/connect-pg-simple": "^7.0.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.4",
+    "@types/passport": "^1.0.7",
+    "@types/passport-local": "^1.0.34",
     "concurrently": "^6.3.0",
     "nodemon": "^2.0.7"
   }

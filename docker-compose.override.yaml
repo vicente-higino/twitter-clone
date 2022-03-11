@@ -22,15 +22,15 @@ services:
       POSTGRES_DB: twitter-clone
       POSTGRES_HOST: db
       NODE_ENV: dev
-    volumes: 
+    volumes:
       - ./server:/home/app
     command: npm run server
     ports:
       - "5000:5000"
   react:
-    image: node:alpine
+    image: node:16-alpine
     working_dir: /home/app
-    volumes: 
+    volumes:
       - ./client:/home/app
     command: npm run start
     ports:
@@ -38,4 +38,4 @@ services:
 
 volumes:
   database:
-  
+

@@ -1,12 +1,12 @@
-import Sequelize from "sequelize";
-import user from "./Models/User.js"
-import post from "./Models/Post.js"
-import profile from "./Models/Profile.js"
-import like from "./Models/Like.js"
-import follower from "./Models/Follower.js"
+import { Options, Sequelize } from "sequelize";
+import user from "./Models/User"
+import post from "./Models/Post"
+import profile from "./Models/Profile"
+import like from "./Models/Like"
+import follower from "./Models/Follower"
 import { config } from "dotenv";
 config();
-const db_connection = {
+const db_connection: Options = {
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
   username: process.env.POSTGRES_USER,
@@ -14,14 +14,15 @@ const db_connection = {
   dialect: 'postgres',
   logging: false
 };
+
 export const db = new Sequelize(db_connection);
 
 export const Post = post(db);
+
 export const User = user(db);
 export const Profile = profile(db);
 export const Like = like(db);
 export const Follower = follower(db);
-
 User.hasOne(Profile);
 Profile.belongsTo(User);
 Profile.hasMany(Post);
@@ -32,12 +33,11 @@ Post.belongsTo(Profile);
 Post.hasMany(Like);
 Like.belongsTo(Post);
 Like.belongsTo(Profile);
-
 (async () => {
   while (true) {
     try {
       await db.authenticate();
-      await db.sync({ alter: true });
+      await db.sync();
       console.log('Connection has been established successfully.');
       break;
     } catch (error) {
