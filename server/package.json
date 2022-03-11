@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsc -w",
     "server": "nodemon dist/App.js",
-    "prod": "node dist/App.js"
+    "prod": "tsc && node dist/App.js"
   },
   "author": "",
   "license": "ISC",
