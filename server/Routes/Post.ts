@@ -6,7 +6,7 @@ export const Post: Handler = async (req, res) => {
     if (req.user) {
       const { text, images } = req.body;
       const { profile } = req.user;
-      const { id } = await profile.createPost({ text, images });
+      const { id } = await profile.createPost({ text, images: JSON.stringify(images) });
       const post = await (P.findByPk(id, {
         include: [
           { model: Profile, attributes: ['username', 'images'] },
