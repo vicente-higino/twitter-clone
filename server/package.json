@@ -5,7 +5,7 @@
   "main": "App.js",
   "scripts": {
     "dev": "tsc -w",
-    "server": "nodemon dist/App.js",
+    "server": "concurrently --kill-others \"tsc -w\" \"nodemon dist/App.js\"",
     "prod": "tsc && node dist/App.js"
   },
   "author": "",

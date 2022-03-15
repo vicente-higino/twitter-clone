@@ -2,6 +2,7 @@ export * from "./Profile";
 export * from "./ProfileUsername";
 export * from "./MyPosts";
 export * from "./Post";
+export * from "./RemovePost";
 export * from "./MyProfile_Following";
 export * from "./MyProfile_Followers";
 export * from "./Profile_id_Follow";

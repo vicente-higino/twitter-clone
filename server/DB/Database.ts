@@ -30,7 +30,7 @@ Profile.hasMany(Like);
 Profile.hasMany(Follower);
 Follower.belongsTo(Profile);
 Post.belongsTo(Profile);
-Post.hasMany(Like);
+Post.hasMany(Like, { onDelete: "CASCADE" });
 Like.belongsTo(Post);
 Like.belongsTo(Profile);
 (async () => {

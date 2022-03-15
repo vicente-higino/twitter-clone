@@ -39,6 +39,7 @@ export default (sequelize: Sequelize) => {
     },
     images: {
       type: DataTypes.STRING(5000),
+      defaultValue: "[]",
       get() {
         return JSON.parse(this.getDataValue("images"));
       }

@@ -15,6 +15,7 @@ services:
       - "5432"
   node_server:
     image: node:alpine
+    restart: always
     working_dir: /home/app
     environment:
       POSTGRES_PASSWORD: xTMYCxJv7hPw2NocSn4sAZbL9
@@ -29,6 +30,7 @@ services:
       - "5000:5000"
   react:
     image: node:16-alpine
+    restart: always
     working_dir: /home/app
     volumes:
       - ./client:/home/app

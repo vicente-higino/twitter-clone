@@ -18,6 +18,7 @@ privateRouter.get("/profile/:username", routes.ProfileUsername);
 privateRouter.get("/myposts", routes.MyPosts);
 privateRouter.get("/feed", routes.Feed);
 privateRouter.post("/post", routes.Post);
+privateRouter.delete("/post/:id", routes.RemovePost);
 privateRouter.get("/myprofile/following", routes.MyProfile_Following);
 privateRouter.get("/myprofile/followers", routes.MyProfile_Followers);
 privateRouter.get("/profile/:id/follow", routes.Profile_id_Follow);
