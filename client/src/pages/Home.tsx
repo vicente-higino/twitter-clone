@@ -10,12 +10,11 @@ import { IPost } from "../api/ProfileByUsername";
 export function Home() {
   const { state, setState } = useContext(StateContext);
   const [posts, setPosts] = useState<IPost[]>([]);
-  const { ref, inView } = useInView();
   const offset = useRef(0);
   let history = useHistory();
-  const props = { inviewRef: ref, posts };
   const addPosts = (posts: IPost[]) => setPosts((prev) => prev.concat(posts));
-  const unshiftPost = (post: IPost) => setPosts((prev) => [post, ...prev]);
+  const insertPost = (post: IPost) => setPosts((prev) => [post, ...prev]);
+  const removePost = (id: number) => setPosts((prev) => prev.filter((v) => id != v.id));
   const getPosts = async () => {
     const {
       data: { feed: posts },
@@ -38,18 +37,11 @@ export function Home() {
       }
     })();
   }, []);
-  useEffect(() => {
-    (async () => {
-      if (inView) {
-        await getPosts();
-      }
-    })();
-  }, [inView]);
 
   return (
     <section>
-      <PostMaker addPost={unshiftPost} />
-      <Feed {...props} />
+      <PostMaker addPost={insertPost} />
+      <Feed {...{ posts, getPosts, removePost }} />
     </section>
   );
 }

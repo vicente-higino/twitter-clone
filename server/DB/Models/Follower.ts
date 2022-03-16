@@ -22,14 +22,8 @@ export default (sequelize: Sequelize) => {
             primaryKey: true,
         },
         followerId: DataTypes.INTEGER,
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: new Date()
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: new Date()
-        },
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
     }, {
         sequelize,
         modelName: 'follower'

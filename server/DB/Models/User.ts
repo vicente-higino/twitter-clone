@@ -44,14 +44,8 @@ export default (sequelize: Sequelize) => {
 				len: [8, 64]
 			}
 		},
-		createdAt: {
-			type: DataTypes.DATE,
-			defaultValue: new Date()
-		},
-		updatedAt: {
-			type: DataTypes.DATE,
-			defaultValue: new Date()
-		},
+		createdAt: DataTypes.DATE,
+		updatedAt: DataTypes.DATE,
 	}, {
 		sequelize,
 		modelName: 'user'

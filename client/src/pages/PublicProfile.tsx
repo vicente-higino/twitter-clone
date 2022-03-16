@@ -13,6 +13,7 @@ export function PublicProfile() {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [profile, setProfile] = useState<Profile | null>();
   const [message, setMessage] = useState<string>();
+  const removePost = (id: number) => setPosts((prev) => prev.filter((v) => id != v.id));
   let history = useHistory();
   const location = useLocation();
   let { username } = useParams<{ username: string }>();
@@ -57,7 +58,7 @@ export function PublicProfile() {
         </ErrorMessage>
       )}
       <ProfileInfo {...profileProps} />
-      <Feed posts={posts} />
+      <Feed posts={posts} removePost={removePost} />
     </section>
   );
 }

@@ -144,6 +144,10 @@ input[type=submit]:hover {
   margin: 0;
 }
 
+.hover-pointer:hover {
+  cursor: pointer;
+}
+
 .post-like:hover {
   cursor: pointer;
 }

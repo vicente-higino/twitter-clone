@@ -32,14 +32,8 @@ export default (sequelize: Sequelize) => {
                 isInt: true
             }
         },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: new Date()
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: new Date()
-        },
+        createdAt: DataTypes.DATE,
+		updatedAt: DataTypes.DATE,
     }, {
         sequelize,
         modelName: 'like'

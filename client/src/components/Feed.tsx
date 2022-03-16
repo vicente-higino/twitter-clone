@@ -7,11 +7,10 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { ImagesEntity, IPost } from "../api/ProfileByUsername";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faEllipsisV, faTrash, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as farHeart } from "@fortawesome/free-regular-svg-icons";
 import styled from "styled-components";
-
-type inviewRef = (node?: Element | null | undefined) => void;
+import { useInView } from "react-intersection-observer";
 
 interface IFullScreenContext {
   fullScreenURL?: string | null;
@@ -31,10 +30,11 @@ export const FullScreenImageContextProvider: FC = ({ children }) => {
 
 export const Feed: FC<{
   posts: IPost[];
-  inviewRef?: inviewRef;
-}> = ({ posts, inviewRef }) => {
-  const feed = posts.map((post) => {
-    return <Post key={post.id} {...{ post, inviewRef }} />;
+  getPosts?: () => Promise<void>;
+  removePost?: (id: number) => void;
+}> = ({ posts, getPosts, removePost }) => {
+  const feed = posts.map((post, i) => {
+    return <Post key={post.id} {...{ post, isLast: i == posts.length - 1, getPosts, removePost }} />;
   });
   return (
     <FullScreenImageContextProvider>
@@ -46,11 +46,19 @@ export const Feed: FC<{
 
 const Post: FC<{
   post: IPost;
-  inviewRef?: inviewRef;
-}> = ({ post, inviewRef }) => {
+  isLast: boolean;
+  getPosts?: () => Promise<void>;
+  removePost?: (id: number) => void;
+}> = ({ post, getPosts, isLast, removePost }) => {
+  const { ref, inView } = useInView();
+  useEffect(() => {
+    (async () => {
+      isLast && inView && getPosts && (await getPosts());
+    })();
+  }, [inView]);
   return (
-    <div ref={inviewRef} className="post">
-      <PostHeader post={post} />
+    <div ref={ref} className="post">
+      <PostHeader post={post} removePost={removePost} />
       <PostText post={post} />
       <Images post={post} />
       <PostFooter post={post} />
@@ -71,7 +79,8 @@ const MainText = styled.p<{ collapsed: boolean }>`
 
 const PostText: FC<{ post: IPost }> = ({ post }) => {
   const [collapsed, setCollapsed] = useState(true);
-  return post.text.length > 0 ? (
+  if (!post.text) return null;
+  return (
     <MainText
       onClick={() => {
         setCollapsed((prev) => !prev);
@@ -80,13 +89,16 @@ const PostText: FC<{ post: IPost }> = ({ post }) => {
     >
       {post.text}
     </MainText>
-  ) : null;
+  );
 };
 
 const PostHeader: FC<{
   post: IPost;
-}> = ({ post }) => {
+  removePost?: (id: number) => void;
+}> = ({ post, removePost }) => {
+  const { state } = useContext(StateContext);
   const {
+    id,
     profile: { username, images },
     createdAt,
   } = post;
@@ -100,6 +112,56 @@ const PostHeader: FC<{
         <Link className="profile-link" to={`/profile/${username}`}>{`@${username}`}</Link>
       </h1>
       <p className="post-sideTime">{getTimePassed(createdAt)}</p>
+      {state.profile?.username == username && <PostMenuOptions id={id} removePost={removePost} />}
+    </div>
+  );
+};
+
+const PostMenuOptions: FC<{ id: number; removePost?: (id: number) => void }> = ({ id, removePost }) => {
+  const [toggle, setToggle] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const deletePost = async () => {
+    try {
+      setLoading(true);
+      await axios.delete(`${url}/post/${id}`);
+      removePost && removePost(id);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setToggle(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, [toggle]);
+  return (
+    <div ref={ref} style={{ marginInlineStart: "5px", position: "relative" }}>
+      <FontAwesomeIcon className="hover-pointer" icon={faEllipsisV} onClick={() => setToggle((prev) => !prev)} />
+      <div
+        style={{
+          position: "absolute",
+          display: toggle ? "inline-block" : "none",
+          backgroundColor: "#4c4c4c",
+          minWidth: "4rem",
+          width: "max-content",
+          padding: ".25rem",
+          maxWidth: "90vw",
+          zIndex: 5,
+          inset: "70% 0px auto auto",
+        }}
+      >
+        <button disabled={loading} onClick={deletePost}>
+          Delete post <FontAwesomeIcon icon={faTrashAlt} />
+        </button>
+      </div>
     </div>
   );
 };
@@ -176,7 +238,7 @@ const Image: FC<{
 
 const FullScrenImage: FC = () => {
   const { fullScreenURL, setFullScreenURL } = useContext(FullScreenImageContext);
-  const imgRef = useRef<HTMLImageElement | null>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
     imgRef?.current?.classList.add("full-opacity");
   }, [fullScreenURL]);

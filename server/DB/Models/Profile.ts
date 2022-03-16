@@ -18,7 +18,7 @@ export class Profile extends Model<
 	public getPosts!: HasManyGetAssociationsMixin<Post>;
 	public getFollowers!: HasManyGetAssociationsMixin<Follower>;
 	public countFollowers!: HasManyCountAssociationsMixin;
-	public createFollower!: HasManyCreateAssociationMixin<Follower>;
+	public addFollower!: HasManyAddAssociationMixin<Follower, number>;
 	public removeFollower!: HasManyRemoveAssociationMixin<Follower, number>;
 	public hasFollower!: HasManyHasAssociationMixin<Follower, number>;
 	public addLike!: HasManyAddAssociationMixin<Like, number>;
@@ -59,14 +59,8 @@ export default (sequelize: Sequelize) => {
 				return JSON.parse(this.getDataValue("images"));
 			}
 		},
-		createdAt: {
-			type: DataTypes.DATE,
-			defaultValue: new Date()
-		},
-		updatedAt: {
-			type: DataTypes.DATE,
-			defaultValue: new Date()
-		},
+		createdAt: DataTypes.DATE,
+		updatedAt: DataTypes.DATE
 	}, {
 		sequelize,
 		modelName: 'profile'

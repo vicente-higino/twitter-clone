@@ -23,7 +23,7 @@ export const Feed: Handler = async (req, res) => {
       offset,
       where: {
         createdAt: {
-          [Op.lte]: time || new Date().toISOString()
+          [Op.lte]: time || new Date()
         }
       }
     }));
